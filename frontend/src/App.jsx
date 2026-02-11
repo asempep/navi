@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { fetchHome, fetchMatches, fetchGoalLogs, fetchAssistLogs, fetchAttendanceLogs } from './api'
 import Header from './components/Header'
 import Home from './pages/Home'
@@ -9,6 +9,7 @@ import Goals from './pages/Goals'
 import Assists from './pages/Assists'
 import Attendance from './pages/Attendance'
 import Admin from './pages/Admin'
+import AdminMatchEdit from './pages/AdminMatchEdit'
 import './App.css'
 
 function App() {
@@ -20,7 +21,9 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const location = useLocation()
-  const isAdminPage = location.pathname === '/admin'
+  const isAdminPage = location.pathname.startsWith('/admin')
+  // /admin 하위 경로 직접 접근 시 /admin으로 리다이렉트 (경기 수정 등은 Admin 내부에서 처리)
+  const isAdminSubPage = isAdminPage && location.pathname !== '/admin'
 
   useEffect(() => {
     let cancelled = false
@@ -52,12 +55,25 @@ function App() {
     return () => { cancelled = true }
   }, [])
 
-  // 관리 페이지: 데이터 로딩/에러와 무관하게 표시
+  // 홈 화면 진입 시마다 홈 데이터 재요청 (선수 명단 툴팁 등 최신 반영)
+  useEffect(() => {
+    if (location.pathname !== '/' && location.pathname !== '/home') return
+    let cancelled = false
+    fetchHome()
+      .then((home) => { if (!cancelled) setHomeData(home) })
+      .catch(() => {})
+    return () => { cancelled = true }
+  }, [location.pathname])
+
+  // 관리 페이지: /admin 만 허용, 하위 경로는 /admin으로 리다이렉트
+  if (isAdminSubPage) {
+    return <Navigate to="/admin" replace />
+  }
   if (isAdminPage) {
     return (
       <div className="app">
         <Header />
-        <main className="main">
+        <main className="main main--admin">
           <Admin />
         </main>
       </div>

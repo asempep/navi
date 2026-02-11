@@ -99,4 +99,31 @@ public class NaviController {
         naviService.deleteMatch(id);
         return ResponseEntity.noContent().build();
     }
+
+    // ---------- 다음 경기 (홈 화면 "다음 경기" 섹션용) ----------
+
+    /** 관리자용: 다음 경기 목록 */
+    @GetMapping("/next-matches")
+    public ResponseEntity<List<NextMatchDto>> getNextMatches() {
+        return ResponseEntity.ok(naviService.getNextMatches());
+    }
+
+    /** 다음 경기 등록 */
+    @PostMapping("/next-matches")
+    public ResponseEntity<NextMatchDto> createNextMatch(@RequestBody CreateNextMatchRequest body) {
+        return ResponseEntity.ok(naviService.createNextMatch(body));
+    }
+
+    /** 다음 경기 수정 */
+    @PutMapping("/next-matches/{id}")
+    public ResponseEntity<NextMatchDto> updateNextMatch(@PathVariable Long id, @RequestBody CreateNextMatchRequest body) {
+        return ResponseEntity.ok(naviService.updateNextMatch(id, body));
+    }
+
+    /** 다음 경기 삭제 */
+    @DeleteMapping("/next-matches/{id}")
+    public ResponseEntity<Void> deleteNextMatch(@PathVariable Long id) {
+        naviService.deleteNextMatch(id);
+        return ResponseEntity.noContent().build();
+    }
 }

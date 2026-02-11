@@ -3,6 +3,7 @@ package com.navi.service;
 import com.navi.dto.*;
 import com.navi.entity.*;
 import com.navi.repository.*;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ public class NaviService {
     private final MatchGoalAssistRepository goalAssistRepository;
     private final MatchAttendanceRepository attendanceRepository;
     private final NextMatchRepository nextMatchRepository;
+    private final EntityManager entityManager;
 
     /** 홈 화면: 시즌 전적 + 다음 경기 + 득점/도움/출석 순위 */
     public HomeResponseDto getHome() {
@@ -42,8 +44,8 @@ public class NaviService {
                 .build();
     }
 
-    /** 다음 경기 목록 (경기일 오름차순) */
-    private List<NextMatchDto> getNextMatches() {
+    /** 다음 경기 목록 (경기일 오름차순) - 홈 화면 및 관리자 목록용 */
+    public List<NextMatchDto> getNextMatches() {
         return nextMatchRepository.findAllByOrderByMatchDateAsc().stream()
                 .map(m -> NextMatchDto.builder()
                         .id(m.getId())
@@ -54,6 +56,65 @@ public class NaviService {
                         .memo(m.getMemo())
                         .build())
                 .toList();
+    }
+
+    /** 다음 경기 등록 */
+    @Transactional
+    public NextMatchDto createNextMatch(CreateNextMatchRequest req) {
+        if (req == null || req.getMatchDate() == null) {
+            throw new IllegalArgumentException("경기일은 필수입니다.");
+        }
+        String opponentStr = req.getOpponent() != null ? req.getOpponent().trim() : "";
+        NextMatch entity = NextMatch.builder()
+                .matchDate(req.getMatchDate())
+                .matchTime(req.getMatchTime())
+                .opponent(opponentStr)
+                .venue(req.getVenue() != null && !req.getVenue().isBlank() ? req.getVenue().trim() : null)
+                .memo(req.getMemo() != null && !req.getMemo().isBlank() ? req.getMemo().trim() : null)
+                .build();
+        NextMatch saved = nextMatchRepository.save(entity);
+        return NextMatchDto.builder()
+                .id(saved.getId())
+                .matchDate(saved.getMatchDate())
+                .matchTime(saved.getMatchTime())
+                .opponent(saved.getOpponent())
+                .venue(saved.getVenue())
+                .memo(saved.getMemo())
+                .build();
+    }
+
+    /** 다음 경기 수정 */
+    @Transactional
+    public NextMatchDto updateNextMatch(Long id, CreateNextMatchRequest req) {
+        if (req == null || req.getMatchDate() == null) {
+            throw new IllegalArgumentException("경기일은 필수입니다.");
+        }
+        NextMatch entity = nextMatchRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("다음 경기를 찾을 수 없습니다."));
+        String opponentStr = req.getOpponent() != null ? req.getOpponent().trim() : "";
+        entity.setMatchDate(req.getMatchDate());
+        entity.setMatchTime(req.getMatchTime());
+        entity.setOpponent(opponentStr);
+        entity.setVenue(req.getVenue() != null && !req.getVenue().isBlank() ? req.getVenue().trim() : null);
+        entity.setMemo(req.getMemo() != null && !req.getMemo().isBlank() ? req.getMemo().trim() : null);
+        NextMatch saved = nextMatchRepository.save(entity);
+        return NextMatchDto.builder()
+                .id(saved.getId())
+                .matchDate(saved.getMatchDate())
+                .matchTime(saved.getMatchTime())
+                .opponent(saved.getOpponent())
+                .venue(saved.getVenue())
+                .memo(saved.getMemo())
+                .build();
+    }
+
+    /** 다음 경기 삭제 */
+    @Transactional
+    public void deleteNextMatch(Long id) {
+        if (!nextMatchRepository.existsById(id)) {
+            throw new IllegalArgumentException("다음 경기를 찾을 수 없습니다.");
+        }
+        nextMatchRepository.deleteById(id);
     }
 
     private SeasonStatsDto getSeasonStats() {
@@ -376,7 +437,13 @@ public class NaviService {
         final Match savedMatch = matchRepository.save(match);
 
         attendanceRepository.findByMatchId(matchId).forEach(attendanceRepository::delete);
-        List<Long> attendeeIds = req.getAttendeePlayerIds() != null ? req.getAttendeePlayerIds() : List.of();
+        entityManager.flush(); // 삭제를 DB에 반영한 뒤 삽입 (유니크 제약 위반 방지)
+        // null 제거·중복 제거 (findById(null) 시 예외 방지)
+        List<Long> attendeeIds = (req.getAttendeePlayerIds() != null ? req.getAttendeePlayerIds() : List.<Long>of())
+                .stream()
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
         for (Long playerId : attendeeIds) {
             playerRepository.findById(playerId).ifPresent(player ->
                     attendanceRepository.save(MatchAttendance.builder()
@@ -387,6 +454,7 @@ public class NaviService {
         }
 
         goalAssistRepository.findByMatchIdOrderByGoalsDescAssistsDesc(matchId).forEach(goalAssistRepository::delete);
+        entityManager.flush(); // 삭제를 DB에 반영한 뒤 삽입
         List<GoalAssistRecordItemDto> records = req.getGoalAssistRecords() != null ? req.getGoalAssistRecords() : List.of();
         for (GoalAssistRecordItemDto item : records) {
             if (item.getPlayerId() == null) continue;

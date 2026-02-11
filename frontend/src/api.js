@@ -105,3 +105,49 @@ export async function deleteMatch(matchId) {
   const res = await fetch(`${API_BASE}/matches/${matchId}`, { method: 'DELETE' });
   if (!res.ok) throw new Error('경기 삭제 실패');
 }
+
+// ---------- 다음 경기 (홈 화면 "다음 경기" 섹션용) ----------
+
+/** 다음 경기 목록 (관리자용) */
+export async function fetchNextMatches() {
+  const res = await fetch(`${API_BASE}/next-matches`);
+  if (!res.ok) throw new Error('다음 경기 목록 로드 실패');
+  return res.json();
+}
+
+/**
+ * 다음 경기 등록
+ * @param {Object} body - { matchDate, matchTime?, opponent, venue?, memo? }
+ */
+export async function createNextMatch(body) {
+  const res = await fetch(`${API_BASE}/next-matches`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const msg = await res.text();
+    throw new Error(msg || '다음 경기 등록 실패');
+  }
+  return res.json();
+}
+
+/** 다음 경기 수정 */
+export async function updateNextMatch(id, body) {
+  const res = await fetch(`${API_BASE}/next-matches/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const msg = await res.text();
+    throw new Error(msg || '다음 경기 수정 실패');
+  }
+  return res.json();
+}
+
+/** 다음 경기 삭제 */
+export async function deleteNextMatch(id) {
+  const res = await fetch(`${API_BASE}/next-matches/${id}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error('다음 경기 삭제 실패');
+}
