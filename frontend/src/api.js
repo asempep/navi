@@ -1,4 +1,5 @@
-const API_BASE = '/api';
+// 로컬: Vite 프록시(/api → localhost:8080). Vercel 등 배포 시 VITE_API_BASE에 백엔드 URL 설정
+const API_BASE = import.meta.env.VITE_API_BASE || '/api';
 
 export async function fetchHome() {
   const res = await fetch(`${API_BASE}/home`);

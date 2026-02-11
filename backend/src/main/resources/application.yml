@@ -2,9 +2,10 @@ spring:
   application:
     name: navi-backend
   datasource:
-    url: jdbc:mysql://localhost:3306/navi_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul
-    username: root
-    password: password
+    # Railway: MySQL 서비스 연결 후 SPRING_DATASOURCE_* 변수 설정. 로컬은 아래 기본값 사용
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/navi_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -16,5 +17,6 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
     open-in-view: false
 
+# Railway는 PORT 환경 변수 주입. 로컬은 8080
 server:
-  port: 8080
+  port: ${PORT:8080}

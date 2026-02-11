@@ -101,4 +101,41 @@ npm run dev
 ## 빌드
 
 - 백엔드: `cd backend && ./mvnw package` → `target/navi-backend-1.0.0.jar`
-- 프론트: `cd frontend && npm run build` → `frontend/dist/` (정적 파일을 Spring에서 서빙하려면 백엔드에 복사 후 설정 추가)
+- 프론트: `cd frontend && npm run build` → `frontend/dist/`
+
+---
+
+## 배포 (Vercel + Railway)
+
+- **프론트엔드**: Vercel  
+- **백엔드 + DB**: Railway (Spring Boot + MySQL)
+
+### 1. Railway: MySQL + 백엔드
+
+1. [Railway](https://railway.app) 로그인 후 **New Project**.
+2. **Add Plugin** → **MySQL** 선택. 생성된 MySQL 서비스에서 **Variables** 탭에 접속해 연결 정보 확인.
+3. **Add Service** → **GitHub Repo**에서 이 저장소 선택 후:
+   - **Root Directory**: `backend` 로 지정.
+   - **Build**: Dockerfile 사용 (자동 감지).
+   - **Deploy** 후 서비스 URL 확인 (예: `https://navi-backend-production-xxxx.up.railway.app`).
+4. 백엔드 서비스 **Variables**에 다음 추가 (MySQL 연결 정보는 2번에서 복사):
+   - `SPRING_DATASOURCE_URL` = `jdbc:mysql://호스트:포트/DB명?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul`  
+     (Railway MySQL은 보통 `MYSQL_URL` 등으로 주어지며, 형식이 `mysql://...` 이면 앞에 `jdbc:` 붙이고 드라이버 호환 형태로 수정)
+   - `SPRING_DATASOURCE_USERNAME` = MySQL 사용자명
+   - `SPRING_DATASOURCE_PASSWORD` = MySQL 비밀번호
+   - `PORT`는 Railway가 자동 주입하므로 별도 설정 불필요.
+5. 재배포 후 **Settings** → **Networking** → **Generate Domain** 으로 공개 URL 생성.
+
+### 2. Vercel: 프론트엔드
+
+1. [Vercel](https://vercel.com) 로그인 후 **Add New** → **Project**.
+2. 이 저장소 연결. **Root Directory**를 `frontend`로 설정.
+3. **Environment Variables** 추가:
+   - `VITE_API_BASE` = `https://위에서_확인한_Railway_백엔드_URL/api`  
+     (끝에 `/api` 포함, 예: `https://navi-backend-production-xxxx.up.railway.app/api`)
+4. **Deploy** 후 프론트 URL에서 동작 확인.
+
+### 3. 참고
+
+- Railway MySQL Variables에 `MYSQL_PRIVATE_URL` 등이 있으면, 해당 값을 JDBC 형식(`jdbc:mysql://...`)으로 바꿔 `SPRING_DATASOURCE_URL`에 넣으면 됩니다.
+- 관리자 비밀번호: Vercel에 `VITE_ADMIN_PASSWORD` 환경 변수로 설정 (선택).
