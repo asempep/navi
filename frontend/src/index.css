@@ -1,0 +1,40 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* 메인 테마: #2A508C, 포인트: #FFFF12 */
+  --bg: #152a52;
+  --card: #2A508C;
+  --border: #3d6ab5;
+  --text: #e8eef5;
+  --muted: #9ab3d4;
+  --accent: #FFFF12;
+  --win: #3fb950;
+  --draw: #d29922;
+  --lose: #f85149;
+  --font: 'Noto Sans KR', -apple-system, sans-serif;
+}
+
+body {
+  font-family: var(--font);
+  background: linear-gradient(180deg, #152a52 0%, #2A508C 50%, #1a3066 100%);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+#root {
+  min-height: 100vh;
+}

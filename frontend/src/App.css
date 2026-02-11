@@ -1,0 +1,876 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  /* 배경은 Header.css에서 검정(#000)으로 지정 */
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.header-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.header h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text);
+}
+
+/* 헤더 오른쪽 관리 버튼 */
+.header-admin-btn {
+  flex-shrink: 0;
+  font-family: var(--font);
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.header-admin-btn:hover {
+  background: var(--border);
+  border-color: var(--accent);
+}
+
+.header-admin-btn-back {
+  color: var(--muted);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tabs a.tab {
+  text-decoration: none;
+  display: inline-block;
+}
+
+.tab {
+  font-family: var(--font);
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.tab:hover:not(:disabled) {
+  background: var(--border);
+  border-color: var(--accent);
+}
+
+.tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+.tab:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.main {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* 홈: 왼쪽 본문 + 오른쪽 선수 명단 */
+.home-layout {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.home-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.home-sidebar {
+  flex-shrink: 0;
+  width: 220px;
+}
+
+.player-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.player-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.player-list li:last-child {
+  border-bottom: none;
+}
+
+.player-list li.empty {
+  color: var(--muted);
+  border: none;
+}
+
+/* 선수 이름 호버 시 툴팁 */
+.player-list-item {
+  position: relative;
+  cursor: default;
+}
+
+.player-tooltip {
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  margin-bottom: 0.35rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: var(--text);
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.player-list-item:hover .player-tooltip {
+  opacity: 1;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: var(--muted);
+}
+
+.error {
+  color: #f85149;
+}
+
+.error small {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.card h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--muted);
+}
+
+/* 순위 카드 토글 헤더 */
+.card-toggle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0;
+  margin: 0 0 0.75rem 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.card-toggle-header:last-child {
+  margin-bottom: 0;
+}
+
+.card-toggle-header h2 {
+  margin-bottom: 0;
+}
+
+.card-toggle-icon {
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.card-toggle .table-wrap {
+  margin-top: 0;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.rank {
+  font-weight: 600;
+  color: var(--accent);
+  width: 2.5rem;
+}
+
+.result-win { color: var(--win); }
+.result-draw { color: var(--draw); }
+.result-lose { color: var(--lose); }
+
+.date {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.match-time {
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.log-row .player {
+  font-weight: 600;
+}
+
+.log-row .detail {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.attendance-names {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.attendance-names span {
+  background: var(--bg);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.empty {
+  color: var(--muted);
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.season-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.season-summary .stat {
+  font-size: 1rem;
+}
+
+.season-summary .stat strong {
+  font-size: 1.25rem;
+  margin-right: 0.25rem;
+}
+
+/* 다음 경기 리스트 */
+.next-match-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.next-match-item {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.next-match-item:last-child {
+  border-bottom: none;
+}
+
+.next-match-date {
+  font-weight: 600;
+  color: var(--accent);
+  min-width: 6rem;
+}
+
+.next-match-time {
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.next-match-opponent {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.next-match-venue,
+.next-match-memo {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.attendance-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.attendance-item {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.attendance-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.attendance-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.attendance-header .date {
+  margin-right: 0.75rem;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.attendance-header .attendance-count {
+  margin-left: auto;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* 관리자 로그인 폼 */
+.admin-page {
+  max-width: 400px;
+}
+
+.admin-login-card h2 {
+  margin-bottom: 0.5rem;
+}
+
+.admin-login-desc {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+}
+
+.admin-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-login-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.admin-login-input {
+  font-family: var(--font);
+  font-size: 1rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  border-radius: 8px;
+}
+
+.admin-login-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.admin-login-error {
+  color: #f85149;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.admin-login-submit {
+  font-family: var(--font);
+  font-size: 1rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.admin-login-submit:hover {
+  opacity: 0.9;
+}
+
+/* 관리자 데이터 관리 툴바 */
+.admin-toolbar .admin-toolbar-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.admin-toolbar .admin-toolbar-inner h2 {
+  margin-bottom: 0;
+}
+
+.admin-desc {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.admin-desc code {
+  background: var(--border);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+.admin-error {
+  color: #f85149;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.admin-players-table {
+  width: 100%;
+}
+
+.admin-players-table th {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.admin-players-table td {
+  padding: 0.5rem 0.75rem;
+  vertical-align: middle;
+}
+
+.admin-player-name {
+  font-weight: 500;
+}
+
+.admin-phone-input {
+  font-family: var(--font);
+  font-size: 0.95rem;
+  padding: 0.4rem 0.6rem;
+  width: 100%;
+  max-width: 180px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  border-radius: 6px;
+}
+
+.admin-phone-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.admin-save-btn {
+  font-family: var(--font);
+  font-size: 0.9rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.admin-save-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.admin-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 데이터 관리: 경기 등록 폼 (Google Form 참고) */
+.admin-match-form-card .admin-desc {
+  margin-bottom: 1rem;
+}
+
+.admin-match-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.admin-form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.admin-form-hint {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0.25rem 0 0.5rem 0;
+}
+
+.admin-form-input,
+.admin-form-select {
+  font-family: var(--font);
+  font-size: 1rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--fg);
+  width: 100%;
+  max-width: 280px;
+}
+
+.admin-form-input:focus,
+.admin-form-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.admin-score-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-score-input {
+  max-width: 80px;
+}
+
+.admin-score-sep {
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.admin-attendee-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.5rem;
+}
+
+.admin-attendee-check {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.admin-attendee-check input {
+  width: 1rem;
+  height: 1rem;
+}
+
+.admin-goal-assist-table-wrap {
+  overflow-x: auto;
+  margin-bottom: 0.5rem;
+}
+
+.admin-goal-assist-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-goal-assist-table th,
+.admin-goal-assist-table td {
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-goal-assist-table .admin-form-select {
+  max-width: none;
+  min-width: 100px;
+}
+
+.admin-ga-input {
+  max-width: 70px;
+}
+
+.admin-remove-row-btn,
+.admin-add-row-btn {
+  font-family: var(--font);
+  font-size: 0.85rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--fg);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.admin-remove-row-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-add-row-btn {
+  margin-top: 0.25rem;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.admin-add-row-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-form-status {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.admin-form-status-ok {
+  color: var(--accent);
+}
+
+.admin-form-submit {
+  font-family: var(--font);
+  font-size: 1rem;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 8px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: opacity 0.2s;
+}
+
+.admin-form-submit:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.admin-form-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.admin-form-cancel {
+  font-family: var(--font);
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.admin-form-cancel:hover {
+  color: var(--fg);
+}
+
+/* 등록된 경기 테이블 (관리 페이지) */
+.admin-matches-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-matches-table th,
+.admin-matches-table td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-matches-table .date {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.admin-edit-btn,
+.admin-delete-btn {
+  font-family: var(--font);
+  font-size: 0.85rem;
+  padding: 0.35rem 0.6rem;
+  margin-right: 0.35rem;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--fg);
+}
+
+.admin-edit-btn:hover,
+.admin-delete-btn:hover {
+  opacity: 0.9;
+}
+
+.admin-edit-btn {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.admin-delete-btn {
+  border-color: var(--lose, #c44);
+  color: var(--lose, #c44);
+}
+
+/* 선수 상세 페이지 */
+.player-detail {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 1rem 0;
+}
+
+.player-detail-back {
+  display: inline-block;
+  font-family: var(--font);
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+  margin-bottom: 1rem;
+  border: none;
+  background: none;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.player-detail-back:hover {
+  opacity: 0.8;
+}
+
+.player-detail-card {
+  margin-bottom: 0;
+}
+
+.player-detail-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+
+.player-detail-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.player-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.player-detail-row:last-child {
+  border-bottom: none;
+}
+
+.player-detail-row dt {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.player-detail-row dd {
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* 선수 이름 클릭 가능 스타일 (홈·테이블·사이드바) */
+.player-name-link {
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font: inherit;
+  padding: 0;
+}
+
+.player-name-link:hover {
+  text-decoration: underline;
+}

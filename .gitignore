@@ -1,0 +1,18 @@
+# 의존성
+node_modules/
+frontend/node_modules/
+
+# 빌드 결과
+backend/target/
+frontend/dist/
+
+# 환경 변수 (비밀키 제외)
+frontend/.env
+
+# IDE / OS
+.idea/
+*.iml
+.DS_Store
+
+# 로그
+*.log

@@ -1,0 +1,2 @@
+# 초기 데이터 넣을 때만 사용: spring.profiles.include=init
+# 또는 실행 시 --spring.profiles.active=init

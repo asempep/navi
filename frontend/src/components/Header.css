@@ -1,0 +1,26 @@
+/* 헤더 배경 그라데이션: 위 검정 → 아래 #152a52 */
+.header {
+  background: linear-gradient(180deg, #000 0%, #152a52 100%);
+}
+
+/* 좌측 상단 타이틀: 클릭 시 홈으로 이동 */
+.header-logo-btn {
+  display: block;
+  padding: 0;
+  margin-bottom: 0.75rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-size: 60px;
+  font-weight: 700;
+  color: #E3B472;
+  line-height: 1.2;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.header-logo-btn:hover {
+  opacity: 0.9;
+}
