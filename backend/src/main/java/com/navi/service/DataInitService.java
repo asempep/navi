@@ -3,6 +3,7 @@ package com.navi.service;
 import com.navi.entity.*;
 import com.navi.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
@@ -14,14 +15,17 @@ import java.time.LocalTime;
 import java.util.List;
 
 /**
- * 개발 시 MySQL DB에 CSV 기반 초기 데이터 삽입 (선택)
- * application.yml 에 spring.profiles.include: init 없으면 미실행
+ * DB 초기 데이터 삽입 (init 프로필 시)
+ * 1) resources/data/*.csv 가 있으면 CSV 기반 시드
+ * 2) 없거나 실패 시 하드코딩 데이터 사용
  */
+@Slf4j
 @Component
 @Profile("init")
 @RequiredArgsConstructor
 public class DataInitService implements ApplicationRunner {
 
+    private final CsvSeedService csvSeedService;
     private final SeasonStatsRepository seasonStatsRepository;
     private final PlayerRepository playerRepository;
     private final MatchRepository matchRepository;
@@ -34,7 +38,14 @@ public class DataInitService implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         if (seasonStatsRepository.count() > 0) return;
 
-        // 시즌 전적: 2경기 0승 2패
+        try {
+            if (csvSeedService.seedIfEmpty()) return;
+        } catch (Exception e) {
+            log.warn("CSV 시드 실패, 하드코딩 데이터로 진행합니다: {}", e.getMessage());
+        }
+        if (seasonStatsRepository.count() > 0) return;
+
+        // 폴백: 시즌 전적 2경기 0승 2패
         seasonStatsRepository.save(SeasonStats.builder()
                 .seasonYear(2026)
                 .totalMatches(2)
