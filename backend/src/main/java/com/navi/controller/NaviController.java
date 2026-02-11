@@ -1,12 +1,14 @@
 package com.navi.controller;
 
 import com.navi.dto.*;
+import com.navi.service.CsvSeedService;
 import com.navi.service.NaviService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * NAVI 시즌 전적 API
@@ -23,6 +25,7 @@ import java.util.List;
 public class NaviController {
 
     private final NaviService naviService;
+    private final CsvSeedService csvSeedService;
 
     @GetMapping("/home")
     public ResponseEntity<HomeResponseDto> getHome() {
@@ -125,5 +128,15 @@ public class NaviController {
     public ResponseEntity<Void> deleteNextMatch(@PathVariable Long id) {
         naviService.deleteNextMatch(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /** CSV 데이터를 DB에 넣기 (DB 비어 있을 때만 동작, 브라우저에서 이 URL 한 번 호출) */
+    @GetMapping("/admin/seed-csv")
+    public ResponseEntity<Map<String, Object>> seedFromCsv() {
+        boolean done = csvSeedService.seedIfEmpty();
+        return ResponseEntity.ok(Map.of(
+                "done", done,
+                "message", done ? "CSV 데이터를 DB에 넣었습니다." : "이미 데이터가 있거나 CSV 리소스가 없습니다."
+        ));
     }
 }
