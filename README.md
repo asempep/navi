@@ -134,7 +134,24 @@ npm run dev
      (끝에 `/api` 포함, 예: `https://navi-backend-production-xxxx.up.railway.app/api`)
 4. **Deploy** 후 프론트 URL에서 동작 확인.
 
-### 3. 참고
+### 3. Railway에서 "Communications link failure" / "Connection refused" 나올 때
+
+- **원인**: 백엔드가 MySQL에 연결할 때 쓰는 주소가 `localhost`이거나, 환경 변수가 백엔드 서비스에 없음.
+- **해결**:
+  1. Railway 대시보드에서 **MySQL 서비스** 선택 → **Variables** 탭에서 다음 값을 복사:
+     - 호스트: `MYSQLHOST` 또는 `MYSQL_URL` 안의 호스트
+     - 포트: `MYSQLPORT` 또는 URL 안의 포트
+     - 사용자: `MYSQLUSER`
+     - 비밀번호: `MYSQLPASSWORD`
+     - DB명: `MYSQLDATABASE` (없으면 `railway`)
+  2. **백엔드 서비스** 선택 → **Variables** 탭에서 아래 세 개를 **반드시** 설정 (값은 위에서 복사한 것 사용):
+     - `SPRING_DATASOURCE_URL` = `jdbc:mysql://복사한호스트:복사한포트/복사한DB명?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul`  
+       (⚠️ `localhost` 사용 금지. 반드시 MySQL 서비스에서 보이는 호스트/포트 사용)
+     - `SPRING_DATASOURCE_USERNAME` = 복사한 사용자명
+     - `SPRING_DATASOURCE_PASSWORD` = 복사한 비밀번호
+  3. 저장 후 **백엔드 서비스**에서 **Redeploy** 실행.
+
+### 4. 참고
 
 - Railway MySQL Variables에 `MYSQL_PRIVATE_URL` 등이 있으면, 해당 값을 JDBC 형식(`jdbc:mysql://...`)으로 바꿔 `SPRING_DATASOURCE_URL`에 넣으면 됩니다.
 - 관리자 비밀번호: Vercel에 `VITE_ADMIN_PASSWORD` 환경 변수로 설정 (선택).

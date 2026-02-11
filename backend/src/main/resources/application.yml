@@ -2,11 +2,11 @@ spring:
   application:
     name: navi-backend
   datasource:
-    # Railway: MySQL 서비스 연결 후 SPRING_DATASOURCE_* 변수 설정. 로컬은 아래 기본값 사용
+    # Railway: 백엔드 서비스 Variables에 SPRING_DATASOURCE_URL(호스트는 MySQL 서비스 호스트, localhost 아님), USERNAME, PASSWORD 설정 필수
     url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/navi_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul}
     username: ${SPRING_DATASOURCE_USERNAME:root}
     password: ${SPRING_DATASOURCE_PASSWORD:password}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
