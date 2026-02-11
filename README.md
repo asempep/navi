@@ -124,7 +124,9 @@ npm run dev
    - `SPRING_DATASOURCE_PASSWORD` = MySQL 비밀번호
    - `PORT`는 Railway가 자동 주입하므로 별도 설정 불필요.
 5. 재배포 후 **Settings** → **Networking** → **Generate Domain** 으로 공개 URL 생성.
-6. **DB에 CSV 데이터 넣기**: DB가 비어 있을 때, 브라우저나 curl로 **GET 백엔드URL/api/admin/seed-csv** 를 한 번 호출하면 CSV 데이터가 DB에 들어갑니다. (예: `https://xxx.up.railway.app/api/admin/seed-csv`) 기동 시 자동 시드가 안 되었을 때 사용하면 됩니다.
+6. **DB에 CSV 데이터 넣기**: 브라우저나 curl로 **GET 백엔드URL/api/admin/seed-csv** 를 호출하세요.  
+   - DB가 **비어 있을 때**: CSV 데이터가 DB에 들어갑니다. (예: `https://xxx.up.railway.app/api/admin/seed-csv`)  
+   - **이미 데이터가 있을 때** (표시가 안 되거나 덮어쓰고 싶을 때): **GET …/api/admin/seed-csv?force=true** 로 호출하면 기존 시즌/경기/출석/골·도움 데이터를 지우고 CSV로 다시 넣습니다. (선수 전화번호는 유지됩니다.)
 
 ### 2. Vercel: 프론트엔드
 

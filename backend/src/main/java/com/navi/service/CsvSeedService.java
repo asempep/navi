@@ -49,6 +49,36 @@ public class CsvSeedService {
             log.info("DB에 이미 데이터가 있어 CSV 시드를 건너뜁니다.");
             return false;
         }
+        return runSeed();
+    }
+
+    /**
+     * 기존 CSV 기반 데이터를 삭제한 뒤 CSV로 다시 시드.
+     * 선수(Player)는 삭제하지 않아 전화번호 등이 유지됩니다.
+     */
+    @Transactional
+    public boolean seedForce() {
+        if (!resourceExists("data/goal_assist.csv")) {
+            log.warn("CSV 리소스 없음: data/goal_assist.csv (JAR 내 resources/data/ 확인)");
+            return false;
+        }
+        try {
+            // FK 순서: 골/도움·출석 → 경기, 다음경기·시즌통계
+            goalAssistRepository.deleteAll();
+            attendanceRepository.deleteAll();
+            matchRepository.deleteAll();
+            nextMatchRepository.deleteAll();
+            seasonStatsRepository.deleteAll();
+            log.info("기존 시즌/경기/출석/골도움 데이터 삭제 후 CSV 재시드 진행.");
+            return runSeed();
+        } catch (Exception e) {
+            log.error("CSV 강제 시드 중 오류: {}", e.getMessage(), e);
+            return false;
+        }
+    }
+
+    /** CSV 리소스 확인 후 시드 실행 (실제 시드 로직) */
+    private boolean runSeed() {
         if (!resourceExists("data/goal_assist.csv")) {
             log.warn("CSV 리소스 없음: data/goal_assist.csv (JAR 내 resources/data/ 확인)");
             return false;

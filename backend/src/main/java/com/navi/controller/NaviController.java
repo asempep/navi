@@ -130,13 +130,19 @@ public class NaviController {
         return ResponseEntity.noContent().build();
     }
 
-    /** CSV 데이터를 DB에 넣기 (DB 비어 있을 때만 동작, 브라우저에서 이 URL 한 번 호출) */
+    /** CSV 데이터를 DB에 넣기. force=true 면 기존 시즌/경기 데이터 삭제 후 CSV로 다시 시드 */
     @GetMapping("/admin/seed-csv")
-    public ResponseEntity<Map<String, Object>> seedFromCsv() {
-        boolean done = csvSeedService.seedIfEmpty();
+    public ResponseEntity<Map<String, Object>> seedFromCsv(
+            @RequestParam(value = "force", required = false, defaultValue = "false") boolean force) {
+        boolean done = force ? csvSeedService.seedForce() : csvSeedService.seedIfEmpty();
+        String message = done
+                ? "CSV 데이터를 DB에 넣었습니다. 화면을 새로고침해 보세요."
+                : (force
+                        ? "CSV 시드 실패. resources/data/ 에 goal_assist.csv 등이 있는지 확인하세요."
+                        : "이미 데이터가 있어 시드하지 않았습니다. CSV로 덮어쓰려면 ?force=true 로 호출하세요.");
         return ResponseEntity.ok(Map.of(
                 "done", done,
-                "message", done ? "CSV 데이터를 DB에 넣었습니다." : "이미 데이터가 있거나 CSV 리소스가 없습니다."
+                "message", message
         ));
     }
 }
