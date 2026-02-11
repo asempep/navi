@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,13 +14,12 @@ import java.time.LocalTime;
 import java.util.List;
 
 /**
- * DB 초기 데이터 삽입 (init 프로필 시)
+ * DB가 비어 있을 때만 초기 데이터 삽입 (프로필 무관, 기동 시 1회)
  * 1) resources/data/*.csv 가 있으면 CSV 기반 시드
  * 2) 없거나 실패 시 하드코딩 데이터 사용
  */
 @Slf4j
 @Component
-@Profile("init")
 @RequiredArgsConstructor
 public class DataInitService implements ApplicationRunner {
 
@@ -90,7 +88,7 @@ public class DataInitService implements ApplicationRunner {
         String[] attend2 = {"민성우", "정준희", "김재린", "송민규", "양승운", "박승재", "장현규", "전찬일", "박성준", "김태운", "김시형", "우형오", "류성우"};
         addAttendance(m2, attend2);
 
-        // 다음 경기 샘플 (init 프로필 실행 시에만)
+        // 다음 경기 (폴백 시)
         if (nextMatchRepository.count() == 0) {
             nextMatchRepository.save(NextMatch.builder()
                     .matchDate(LocalDate.of(2026, 2, 15))

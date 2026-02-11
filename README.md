@@ -124,9 +124,7 @@ npm run dev
    - `SPRING_DATASOURCE_PASSWORD` = MySQL 비밀번호
    - `PORT`는 Railway가 자동 주입하므로 별도 설정 불필요.
 5. 재배포 후 **Settings** → **Networking** → **Generate Domain** 으로 공개 URL 생성.
-6. **DB에 초기 데이터(CSV 기반) 넣기**: 백엔드 서비스 **Variables**에 `SPRING_PROFILES_ACTIVE` = `init` 추가 후 한 번 **Redeploy**.  
-   - 서버 기동 시 `backend/src/main/resources/data/` 안의 CSV(선수, 경기, 출석, 골/도움, 시즌전적, 다음경기)를 읽어 DB에 시드합니다.  
-   - 시드가 끝난 뒤에는 `SPRING_PROFILES_ACTIVE`를 제거하거나 비워 두고 재배포해 두면 됩니다. (이미 데이터가 있으면 init 프로필이 있어도 시드하지 않음.)
+6. **DB에 초기 데이터(CSV 기반)**: 별도 설정 없이, **DB가 비어 있는 상태에서 백엔드가 기동되면** 자동으로 `backend/src/main/resources/data/` 안의 CSV(선수, 경기, 출석, 골/도움, 시즌전적, 다음경기)를 읽어 시드합니다. 이미 데이터가 있으면 시드하지 않습니다.
 
 ### 2. Vercel: 프론트엔드
 

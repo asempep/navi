@@ -42,11 +42,15 @@ public class CsvSeedService {
     private final SeasonStatsRepository seasonStatsRepository;
     private final NextMatchRepository nextMatchRepository;
 
-    /** 이미 데이터가 있으면 시드하지 않음 */
+    /** 이미 데이터가 있으면 시드하지 않음. CSV 리소스 없거나 오류 시 false 반환(예외 없음). */
     @Transactional
     public boolean seedIfEmpty() {
         if (seasonStatsRepository.count() > 0) {
             log.info("DB에 이미 데이터가 있어 CSV 시드를 건너뜁니다.");
+            return false;
+        }
+        if (!resourceExists("data/goal_assist.csv")) {
+            log.warn("CSV 리소스 없음: data/goal_assist.csv (JAR 내 resources/data/ 확인)");
             return false;
         }
         try {
@@ -57,19 +61,27 @@ public class CsvSeedService {
             log.info("CSV 기반 DB 시드 완료.");
             return true;
         } catch (Exception e) {
-            log.error("CSV 시드 중 오류", e);
-            throw new RuntimeException("CSV 시드 실패", e);
+            log.error("CSV 시드 중 오류 (하드코딩 데이터로 폴백 가능): {}", e.getMessage(), e);
+            return false;
         }
     }
 
-    /** 골_도움.csv → 선수 등록 */
+    private boolean resourceExists(String path) {
+        try {
+            return new ClassPathResource(path).exists();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /** 골_도움.csv → 선수 등록 (헤더 BOM/공백 허용) */
     private void seedPlayersFromGoalAssist() throws Exception {
         ClassPathResource resource = new ClassPathResource("data/goal_assist.csv");
         try (var reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8);
              CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT.builder().setHeader().build())) {
             for (CSVRecord record : parser) {
-                String name = record.get("선수명").trim();
-                if (name.isEmpty()) continue;
+                String name = getFirstColumnOrHeader(record, "선수명");
+                if (name == null || name.isEmpty()) continue;
                 playerRepository.findByName(name).orElseGet(() ->
                         playerRepository.save(Player.builder().name(name).build()));
             }
@@ -98,19 +110,20 @@ public class CsvSeedService {
         }
     }
 
-    /** 응답.csv → 경기 + 출석 + 골/도움 */
+    /** 응답.csv → 경기 + 출석 + 골/도움 (헤더 BOM/공백 허용) */
     private void seedMatchesFromResponse() throws Exception {
         ClassPathResource resource = new ClassPathResource("data/response.csv");
         try (var reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8);
              CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT.builder().setHeader().build())) {
             for (CSVRecord record : parser) {
-                String dateStr = record.get("경기일").trim();
-                if (dateStr.isEmpty()) continue;
+                String dateStr = getColumn(record, "경기일", 1);
+                if (dateStr == null || dateStr.isEmpty()) continue;
                 LocalDate matchDate = parseDate(dateStr);
-                String opponent = record.get("상대팀").trim();
-                int ourScore = parseInt(record.get("우리득점"), 0);
-                int opponentScore = parseInt(record.get("상대득점"), 0);
-                String result = record.get("판정").trim();
+                if (matchDate == null) continue;
+                String opponent = getColumn(record, "상대팀", 2);
+                int ourScore = parseInt(getColumn(record, "우리득점", 6), 0);
+                int opponentScore = parseInt(getColumn(record, "상대득점", 7), 0);
+                String result = getColumn(record, "판정", 8);
 
                 Match match = matchRepository.save(Match.builder()
                         .matchDate(matchDate)
@@ -121,25 +134,55 @@ public class CsvSeedService {
                         .build());
 
                 // 참석자: "민성우, 김재린, ..." → 이름 리스트
-                String attendStr = record.get("참석자").trim();
-                List<String> attendNames = Arrays.stream(attendStr.split(","))
-                        .map(String::trim)
-                        .filter(s -> !s.isEmpty())
-                        .collect(Collectors.toList());
-                for (String name : attendNames) {
-                    playerRepository.findByName(name).ifPresent(p ->
-                            attendanceRepository.save(MatchAttendance.builder()
-                                    .match(match)
-                                    .player(p)
-                                    .attended(true)
-                                    .build()));
+                String attendStr = getColumn(record, "참석자", 3);
+                if (attendStr != null) {
+                    List<String> attendNames = Arrays.stream(attendStr.split(","))
+                            .map(String::trim)
+                            .filter(s -> !s.isEmpty())
+                            .collect(Collectors.toList());
+                    for (String name : attendNames) {
+                        playerRepository.findByName(name).ifPresent(p ->
+                                attendanceRepository.save(MatchAttendance.builder()
+                                        .match(match)
+                                        .player(p)
+                                        .attended(true)
+                                        .build()));
+                    }
                 }
 
                 // 골/도움 기록: "우형오 1도움\n장현규 1골" 형태 파싱
-                String goalAssistStr = record.get("골도움기록").trim();
-                parseGoalAssistLines(match, goalAssistStr);
+                String goalAssistStr = getColumn(record, "골도움기록", 4);
+                parseGoalAssistLines(match, goalAssistStr != null ? goalAssistStr : "");
             }
         }
+    }
+
+    /** BOM 등으로 헤더명이 안 맞을 수 있으므로, 컬럼명 또는 인덱스로 값 조회 */
+    private static String getColumn(CSVRecord record, String headerName, int columnIndex) {
+        try {
+            String v = record.get(headerName);
+            if (v != null && !v.isEmpty()) return v.trim();
+        } catch (Exception ignored) { }
+        try {
+            if (record.size() > columnIndex) {
+                String v = record.get(columnIndex);
+                return v != null ? v.trim() : "";
+            }
+        } catch (Exception ignored) { }
+        return "";
+    }
+
+    /** 첫 컬럼 값 또는 '선수명' 헤더 값 (BOM 대응) */
+    private static String getFirstColumnOrHeader(CSVRecord record, String headerName) {
+        try {
+            String v = record.get(headerName);
+            if (v != null && !v.isEmpty()) return v.trim();
+        } catch (Exception ignored) { }
+        try {
+            String v = record.get(0);
+            return v != null ? v.trim() : "";
+        } catch (Exception ignored) { }
+        return "";
     }
 
     /** "선수명 N골" / "선수명 N도움" 줄 단위 파싱 */
