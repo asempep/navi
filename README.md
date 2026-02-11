@@ -115,8 +115,7 @@ npm run dev
 1. [Railway](https://railway.app) 로그인 후 **New Project**.
 2. **Add Plugin** → **MySQL** 선택. 생성된 MySQL 서비스에서 **Variables** 탭에 접속해 연결 정보 확인.
 3. **Add Service** → **GitHub Repo**에서 이 저장소 선택 후:
-   - **Root Directory**: `backend` 로 지정.
-   - **Build**: Dockerfile 사용 (자동 감지).
+   - **Root Directory** 설정 칸이 없어도 됨. 프로젝트 루트(`09_NaviPage/`)에 있는 **Dockerfile**이 백엔드를 빌드하므로, Railway가 이 Dockerfile을 자동 감지해 사용함.
    - **Deploy** 후 서비스 URL 확인 (예: `https://navi-backend-production-xxxx.up.railway.app`).
 4. 백엔드 서비스 **Variables**에 다음 추가 (MySQL 연결 정보는 2번에서 복사):
    - `SPRING_DATASOURCE_URL` = `jdbc:mysql://호스트:포트/DB명?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul`  
