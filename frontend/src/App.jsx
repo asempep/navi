@@ -99,7 +99,11 @@ function App() {
           <p className="error">
             {error}
             <br />
-            <small>백엔드(Spring)가 localhost:8080 에서 실행 중인지 확인해 주세요.</small>
+            <small>
+              {import.meta.env.VITE_API_BASE
+                ? '백엔드(Railway)가 실행 중인지, 브라우저에서 API 주소(/api/home)가 열리는지 확인해 주세요.'
+                : '로컬: 백엔드가 localhost:8080에서 실행 중인지 확인해 주세요.'}
+            </small>
           </p>
         </main>
       </div>
