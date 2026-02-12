@@ -164,6 +164,7 @@ public class NaviService {
         return toRankingList(playerAttendance, true);
     }
 
+    /** 값이 같으면 동일 순위 부여 (1,2,3위는 프론트에서 금색 표시) */
     private List<RankingDto> toRankingList(Map<Long, Integer> playerToValue, boolean descending) {
         List<Map.Entry<Long, Integer>> sorted = playerToValue.entrySet().stream()
                 .sorted(descending
@@ -174,12 +175,18 @@ public class NaviService {
         playerRepository.findAll().forEach(p -> idToName.put(p.getId(), p.getName()));
         List<RankingDto> result = new ArrayList<>();
         int rank = 1;
+        Integer prevValue = null;
         for (Map.Entry<Long, Integer> e : sorted) {
+            int value = e.getValue();
+            if (prevValue != null && value != prevValue) {
+                rank = result.size() + 1;
+            }
             result.add(RankingDto.builder()
-                    .rank(rank++)
+                    .rank(rank)
                     .playerName(idToName.getOrDefault(e.getKey(), "?"))
-                    .value(e.getValue())
+                    .value(value)
                     .build());
+            prevValue = value;
         }
         return result;
     }

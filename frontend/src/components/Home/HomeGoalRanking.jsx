@@ -30,8 +30,8 @@ export default function HomeGoalRanking({ topGoals, isOpen, onToggle }) {
                   <tr><td colSpan={3} className="py-4 text-center text-navi-muted">기록 없음</td></tr>
                 ) : (
                   topGoals.map((r) => (
-                    <tr key={r.rank} className="hover:bg-black/5">
-                      <td className="py-1.5 px-2 font-semibold text-navi-accent">{r.rank}</td>
+                    <tr key={r.playerName} className="hover:bg-black/5">
+                      <td className={`py-1.5 px-2 font-semibold ${r.rank <= 3 ? 'text-amber-500' : 'text-black'}`}>{r.rank}</td>
                       <td className="py-1.5 px-2 whitespace-nowrap">
                         <Link to={`/player/${encodeURIComponent(r.playerName)}`} className="text-xs text-navi-accent no-underline hover:underline">
                           {r.playerName}
