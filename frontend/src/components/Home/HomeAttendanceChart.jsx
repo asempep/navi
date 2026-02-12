@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { CARD_BASE, CARD_TITLE } from './cardStyles'
-import { CHART_W, CHART_H, PAD_LEFT, PAD_TOP, getPlotSize, makeSmoothPath } from './chartUtils'
+import { CHART_W, CHART_H, PAD_LEFT, PAD_TOP, getPlotSize, makeSmoothPath, makeSmoothAreaPath } from './chartUtils'
 
 function formatDateLabel(dateStr) {
   if (!dateStr || typeof dateStr !== 'string') return ''
@@ -37,6 +37,7 @@ export default function HomeAttendanceChart({ attendanceLogs = [] }) {
   }, [attendanceByDate, maxAttendance, nAttendance, plotW, plotH])
 
   const smoothPath = useMemo(() => makeSmoothPath(attendancePoints), [attendancePoints])
+  const areaPath = useMemo(() => makeSmoothAreaPath(attendancePoints, PAD_TOP + plotH), [attendancePoints, plotH])
 
   if (nAttendance === 0) return null
 
@@ -45,6 +46,13 @@ export default function HomeAttendanceChart({ attendanceLogs = [] }) {
       <h2 className={CARD_TITLE}>경기당 출석 인원 수</h2>
       <div className="w-full overflow-x-auto">
         <svg viewBox={`0 0 ${CHART_W} ${CHART_H}`} className="w-full h-[140px] min-w-[280px]" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <linearGradient id="attendanceChartGradient" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+              <stop offset="0%" stopColor="#2563eb" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#2563eb" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          {areaPath && <path d={areaPath} fill="url(#attendanceChartGradient)" />}
           {attendancePoints.map((pt, i) => (
             <line
               key={i}
@@ -69,7 +77,7 @@ export default function HomeAttendanceChart({ attendanceLogs = [] }) {
               strokeWidth={0.5}
             />
           ))}
-          <path d={smoothPath} fill="none" stroke="#8b5cf6" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+          <path d={smoothPath} fill="none" stroke="#2563eb" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
           {attendancePoints.map((pt, i) => (
             <text
               key={`${pt.label}-${i}`}

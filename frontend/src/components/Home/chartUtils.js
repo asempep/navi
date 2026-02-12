@@ -33,4 +33,13 @@ export function makeSmoothPath(points) {
   return d
 }
 
+/** 라인 아래 영역을 닫은 경로 (그라데이션 채우기용) */
+export function makeSmoothAreaPath(points, bottomY) {
+  if (!points || points.length < 2) return ''
+  const linePath = makeSmoothPath(points)
+  const last = points[points.length - 1]
+  const first = points[0]
+  return `${linePath} L ${last.x} ${bottomY} L ${first.x} ${bottomY} Z`
+}
+
 export const MONTH_LABELS = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']

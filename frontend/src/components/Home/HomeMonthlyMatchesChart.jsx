@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { CARD_BASE, CARD_TITLE } from './cardStyles'
-import { CHART_W, CHART_H, PAD_LEFT, PAD_TOP, MONTH_LABELS, getPlotSize, makeSmoothPath } from './chartUtils'
+import { CHART_W, CHART_H, PAD_LEFT, PAD_TOP, MONTH_LABELS, getPlotSize, makeSmoothPath, makeSmoothAreaPath } from './chartUtils'
 
 /** 홈 2열: 월별 경기 수 라인 차트 */
 export default function HomeMonthlyMatchesChart({ matches }) {
@@ -30,6 +30,7 @@ export default function HomeMonthlyMatchesChart({ matches }) {
   }, [monthlyCounts, maxMonthly, plotW, plotH])
 
   const smoothPath = useMemo(() => makeSmoothPath(monthlyPoints), [monthlyPoints])
+  const areaPath = useMemo(() => makeSmoothAreaPath(monthlyPoints, PAD_TOP + plotH), [monthlyPoints, plotH])
 
   if (matches.length === 0) return null
 
@@ -38,6 +39,13 @@ export default function HomeMonthlyMatchesChart({ matches }) {
       <h2 className={CARD_TITLE}>월별 경기 수</h2>
       <div className="w-full overflow-x-auto">
         <svg viewBox={`0 0 ${CHART_W} ${CHART_H}`} className="w-full h-[140px] min-w-[280px]" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <linearGradient id="monthlyMatchesGradient" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+              <stop offset="0%" stopColor="#2563eb" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#2563eb" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          {areaPath && <path d={areaPath} fill="url(#monthlyMatchesGradient)" />}
           {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => (
             <line
               key={i}
@@ -62,7 +70,7 @@ export default function HomeMonthlyMatchesChart({ matches }) {
               strokeWidth={0.5}
             />
           ))}
-          <path d={smoothPath} fill="none" stroke="#8b5cf6" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+          <path d={smoothPath} fill="none" stroke="#2563eb" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
           {MONTH_LABELS.map((label, i) => (
             <text
               key={label}
