@@ -72,7 +72,7 @@ function App() {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 px-4 py-6 max-w-[1100px] w-full mx-auto">
+        <main className="flex-1 px-4 py-6 max-w-[1179px] w-full mx-auto">
           <Admin />
         </main>
       </div>
@@ -83,7 +83,7 @@ function App() {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 px-4 py-6 max-w-[1100px] w-full mx-auto">
+        <main className="flex-1 px-4 py-6 max-w-[1179px] w-full mx-auto">
           <p className="text-center py-8 text-navi-muted">로딩 중...</p>
         </main>
       </div>
@@ -94,7 +94,7 @@ function App() {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="flex-1 px-4 py-6 max-w-[1100px] w-full mx-auto">
+        <main className="flex-1 px-4 py-6 max-w-[1179px] w-full mx-auto">
           <p className="text-center py-8 text-red-500">
             {error}
             <br />
@@ -112,10 +112,10 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 px-4 py-6 max-w-[1100px] w-full mx-auto sm:px-6">
+      <main className="flex-1 px-4 py-6 max-w-[1179px] w-full mx-auto sm:px-6">
         <Routes>
-          <Route path="/" element={<Home data={homeData} matches={matches} />} />
-          <Route path="/home" element={<Home data={homeData} matches={matches} />} />
+          <Route path="/" element={<Home data={homeData} matches={matches} attendanceLogs={attendanceLogs} />} />
+          <Route path="/home" element={<Home data={homeData} matches={matches} attendanceLogs={attendanceLogs} />} />
           <Route path="/matches" element={<AllMatches matches={matches} />} />
           <Route path="/goals" element={<Goals logs={goalLogs} />} />
           <Route path="/assists" element={<Assists logs={assistLogs} />} />

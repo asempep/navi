@@ -6,6 +6,11 @@ export default {
   ],
   theme: {
     extend: {
+      // 모바일 기준 뷰포트 1179 × 2556 (width × height)
+      screens: {
+        mobile: '1180px',           // 1180px 이상에서 적용 (min-width)
+        'max-mobile': { max: '1179px' },  // 1179px 이하에서 적용 (max-width)
+      },
       colors: {
         navi: {
           bg: '#ffffff',

@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 
 /**
  * 홈: 대시보드형 메인 화면
@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom'
  * - 승/무/패 비율 도넛
  * - 다음 경기, 월별 경기 추이, 선수 명단
  */
-function Home({ data, matches = [] }) {
+function Home({ data, matches = [], attendanceLogs = [] }) {
   const [openSections, setOpenSections] = useState({
     goals: true,
     assists: false,
@@ -43,7 +43,16 @@ function Home({ data, matches = [] }) {
   const drawPct = (seasonStats.draws / total) * 100
   const lossPct = (seasonStats.losses / total) * 100
 
-  // 월별 경기 수 (matches: { matchDate } 형태 가정)
+  // 날짜 문자열 → "몇월.몇일일" (예: 1.11일, 1.18일)
+  const formatDateLabel = (dateStr) => {
+    if (!dateStr) return ''
+    if (typeof dateStr !== 'string') return ''
+    const m = parseInt(dateStr.slice(5, 7), 10)
+    const d = parseInt(dateStr.slice(8, 10), 10)
+    return `${m}.${d}일`
+  }
+
+  // 월별 경기 수 (1~12월, 월별 집계)
   const monthlyCounts = useMemo(() => {
     const map = {}
     for (let m = 1; m <= 12; m++) map[m] = 0
@@ -57,6 +66,88 @@ function Home({ data, matches = [] }) {
   }, [matches])
   const maxMonthly = Math.max(...monthlyCounts.map((x) => x.count), 1)
   const monthLabels = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
+
+  // 경기당 출석 인원 수: 출석 로그를 경기일 기준 정렬, 일자별 출석 인원
+  const attendanceByDate = useMemo(() => {
+    const sorted = [...attendanceLogs].filter((r) => r.matchDate).sort((a, b) => (a.matchDate || '').localeCompare(b.matchDate || ''))
+    return sorted.map((row) => ({
+      dateStr: row.matchDate,
+      label: formatDateLabel(row.matchDate),
+      count: row.attendedPlayerNames?.length ?? 0,
+    }))
+  }, [attendanceLogs])
+  const maxAttendance = Math.max(...attendanceByDate.map((x) => x.count), 1)
+  const nAttendance = attendanceByDate.length
+
+  // 라인 차트 공통 크기
+  const chartW = 320
+  const chartH = 140
+  const padLeft = 36
+  const padRight = 12
+  const padTop = 14
+  const padBottom = 28
+  const plotW = chartW - padLeft - padRight
+  const plotH = chartH - padTop - padBottom
+
+  // 월별 경기 수 차트: x는 1~12월, y는 해당 월 경기 수
+  const monthlyPoints = useMemo(() => {
+    return monthlyCounts.map(({ month, count }, i) => ({
+      x: padLeft + (plotW / 11) * i,
+      y: padTop + plotH - (count / maxMonthly) * plotH,
+      month,
+      count,
+    }))
+  }, [monthlyCounts, maxMonthly])
+
+  const smoothPathMonthly = useMemo(() => {
+    const pts = monthlyPoints
+    if (pts.length < 2) return ''
+    const to = (p) => `${p.x} ${p.y}`
+    let d = `M ${to(pts[0])}`
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[Math.max(0, i - 1)]
+      const p1 = pts[i]
+      const p2 = pts[i + 1]
+      const p3 = pts[Math.min(pts.length - 1, i + 2)]
+      const cp1x = p1.x + (p2.x - p0.x) / 6
+      const cp1y = p1.y + (p2.y - p0.y) / 6
+      const cp2x = p2.x - (p3.x - p1.x) / 6
+      const cp2y = p2.y - (p3.y - p1.y) / 6
+      d += ` C ${cp1x} ${cp1y} ${cp2x} ${cp2y} ${to(p2)}`
+    }
+    return d
+  }, [monthlyPoints])
+
+  // 경기당 출석 차트: x는 일자 인덱스, y는 해당 경기 출석 인원
+  const attendancePoints = useMemo(() => {
+    if (nAttendance === 0) return []
+    const divisor = nAttendance > 1 ? nAttendance - 1 : 1
+    return attendanceByDate.map(({ label, count }, i) => ({
+      x: padLeft + (plotW / divisor) * i,
+      y: padTop + plotH - (count / maxAttendance) * plotH,
+      label,
+      count,
+    }))
+  }, [attendanceByDate, maxAttendance, nAttendance])
+
+  const smoothPathAttendance = useMemo(() => {
+    const pts = attendancePoints
+    if (pts.length < 2) return pts.length === 1 ? `M ${pts[0].x} ${pts[0].y}` : ''
+    const to = (p) => `${p.x} ${p.y}`
+    let d = `M ${to(pts[0])}`
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[Math.max(0, i - 1)]
+      const p1 = pts[i]
+      const p2 = pts[i + 1]
+      const p3 = pts[Math.min(pts.length - 1, i + 2)]
+      const cp1x = p1.x + (p2.x - p0.x) / 6
+      const cp1y = p1.y + (p2.y - p0.y) / 6
+      const cp2x = p2.x - (p3.x - p1.x) / 6
+      const cp2y = p2.y - (p3.y - p1.y) / 6
+      d += ` C ${cp1x} ${cp1y} ${cp2x} ${cp2y} ${to(p2)}`
+    }
+    return d
+  }, [attendancePoints])
 
   const playerNames = [...new Set([
     ...goalRanking.map((r) => r.playerName),
@@ -78,8 +169,49 @@ function Home({ data, matches = [] }) {
   const cardBase = 'bg-navi-card border border-navi-border rounded-xl p-4 sm:p-5'
   const cardTitle = 'text-sm font-semibold text-navi-muted mb-3'
 
+  // 바디 상단 버튼 공통 스타일 (크기 통일)
+  const btnBase = 'inline-flex items-center justify-center min-h-[36px] px-2 py-1.5 rounded-md border text-sm font-medium no-underline transition-colors shrink-0'
+  const btnActive = 'bg-navi-button border-navi-button text-white'
+  const btnInactive = 'bg-navi-bg border-navi-border text-navi-text hover:bg-navi-border hover:border-navi-button'
+
+  const tabs = [
+    { path: '/home', label: '홈', end: true },
+    { path: '/matches', label: '전체 경기', end: false },
+    { path: '/goals', label: '골', end: false },
+    { path: '/assists', label: '도움', end: false },
+    { path: '/attendance', label: '출석', end: false },
+  ]
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+    <div className="flex flex-row gap-4 lg:gap-6">
+      {/* 화면 왼쪽: 탭 + 외부 링크 + 관리 (1열 세로 나열) */}
+      <nav className="flex flex-col gap-2 shrink-0 w-full sm:w-auto sm:min-w-[140px]" aria-label="메인 메뉴 및 링크">
+        {tabs.map((t) => (
+          <NavLink
+            key={t.path}
+            to={t.path}
+            end={t.end}
+            isActive={t.end ? (_, loc) => loc.pathname === '/' || loc.pathname === '/home' : undefined}
+            className={({ isActive }) => `${btnBase} w-full sm:w-auto justify-center ${isActive ? btnActive : btnInactive}`}
+          >
+            {t.label}
+          </NavLink>
+        ))}
+        <a href="https://res.isdc.co.kr/index.do" target="_blank" rel="noopener noreferrer" className={`${btnBase} w-full sm:w-auto justify-center ${btnInactive}`}>
+          구장예약
+        </a>
+        <a href="https://www.youtube.com/@NatusVincere-mn3qc" target="_blank" rel="noopener noreferrer" className={`${btnBase} w-full sm:w-auto justify-center ${btnInactive}`}>
+          유튜브
+        </a>
+        <a href="https://www.instagram.com/fc_natusvincere?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className={`${btnBase} w-full sm:w-auto justify-center ${btnInactive}`}>
+          인스타
+        </a>
+        <Link to="/admin" className={`${btnBase} w-full sm:w-auto justify-center ${btnInactive}`}>
+          관리
+        </Link>
+      </nav>
+
+      <div className="min-w-0 flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
       {/* 1열: 요약 카드 4개 + 득점 vs 실점 + 득점 순위 */}
       <div className="flex flex-col gap-4">
         <section className="grid grid-cols-2 gap-2 sm:gap-3">
@@ -250,17 +382,116 @@ function Home({ data, matches = [] }) {
         {matches.length > 0 && (
           <section className={cardBase}>
             <h2 className={cardTitle}>월별 경기 수</h2>
-            <div className="flex items-end gap-1 h-24">
-              {monthlyCounts.map(({ month, count }) => (
-                <div key={month} className="flex-1 flex flex-col items-center gap-1 min-w-0">
-                  <span className="text-navi-text text-xs font-medium" style={{ height: count > 0 ? 'auto' : 0 }}>{count > 0 ? count : ''}</span>
-                  <div
-                    className="w-full bg-navi-button rounded-t min-h-[4px] transition-all duration-500"
-                    style={{ height: `${(count / maxMonthly) * 80}px` }}
+            <div className="w-full overflow-x-auto">
+              <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full h-[140px] min-w-[280px]" preserveAspectRatio="xMidYMid meet">
+                {/* 세로 그리드선: 12개월 */}
+                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => (
+                  <line
+                    key={i}
+                    x1={padLeft + (plotW / 11) * i}
+                    y1={padTop}
+                    x2={padLeft + (plotW / 11) * i}
+                    y2={padTop + plotH}
+                    stroke="var(--color-navi-border)"
+                    strokeOpacity={0.4}
+                    strokeWidth={0.5}
                   />
-                  <span className="text-navi-muted text-[10px] truncate w-full text-center">{monthLabels[month - 1]}</span>
-                </div>
-              ))}
+                ))}
+                {[0, 0.25, 0.5, 0.75, 1].map((r) => (
+                  <line
+                    key={r}
+                    x1={padLeft}
+                    y1={padTop + plotH * (1 - r)}
+                    x2={padLeft + plotW}
+                    y2={padTop + plotH * (1 - r)}
+                    stroke="var(--color-navi-border)"
+                    strokeOpacity={0.4}
+                    strokeWidth={0.5}
+                  />
+                ))}
+                <path
+                  d={smoothPathMonthly}
+                  fill="none"
+                  stroke="#8b5cf6"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                {/* X축: 1월~12월 */}
+                {monthLabels.map((label, i) => (
+                  <text
+                    key={label}
+                    x={padLeft + (plotW / 11) * i}
+                    y={chartH - 8}
+                    textAnchor="middle"
+                    style={{ fontFamily: 'inherit', fontSize: 10, fill: 'var(--color-navi-muted)' }}
+                  >
+                    {label.replace('월', '')}
+                  </text>
+                ))}
+                {maxMonthly > 0 && (
+                  <text x={padLeft - 6} y={padTop + 4} textAnchor="end" style={{ fontFamily: 'inherit', fontSize: 10, fill: 'var(--color-navi-muted)' }}>{maxMonthly}</text>
+                )}
+                <text x={padLeft - 6} y={padTop + plotH + 4} textAnchor="end" style={{ fontFamily: 'inherit', fontSize: 10, fill: 'var(--color-navi-muted)' }}>0</text>
+              </svg>
+            </div>
+          </section>
+        )}
+
+        {/* 경기당 출석 인원 수: 가로축 = 경기 일자(몇월.몇일) */}
+        {nAttendance > 0 && (
+          <section className={cardBase}>
+            <h2 className={cardTitle}>경기당 출석 인원 수</h2>
+            <div className="w-full overflow-x-auto">
+              <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full h-[140px] min-w-[280px]" preserveAspectRatio="xMidYMid meet">
+                {attendancePoints.map((pt, i) => (
+                  <line
+                    key={i}
+                    x1={pt.x}
+                    y1={padTop}
+                    x2={pt.x}
+                    y2={padTop + plotH}
+                    stroke="var(--color-navi-border)"
+                    strokeOpacity={0.4}
+                    strokeWidth={0.5}
+                  />
+                ))}
+                {[0, 0.25, 0.5, 0.75, 1].map((r) => (
+                  <line
+                    key={r}
+                    x1={padLeft}
+                    y1={padTop + plotH * (1 - r)}
+                    x2={padLeft + plotW}
+                    y2={padTop + plotH * (1 - r)}
+                    stroke="var(--color-navi-border)"
+                    strokeOpacity={0.4}
+                    strokeWidth={0.5}
+                  />
+                ))}
+                <path
+                  d={smoothPathAttendance}
+                  fill="none"
+                  stroke="#8b5cf6"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                {attendancePoints.map((pt, i) => (
+                  <text
+                    key={`${pt.label}-${i}`}
+                    x={pt.x}
+                    y={chartH - 8}
+                    textAnchor="middle"
+                    style={{ fontFamily: 'inherit', fontSize: 10, fill: 'var(--color-navi-muted)' }}
+                  >
+                    {pt.label}
+                  </text>
+                ))}
+                {maxAttendance > 0 && (
+                  <text x={padLeft - 6} y={padTop + 4} textAnchor="end" style={{ fontFamily: 'inherit', fontSize: 10, fill: 'var(--color-navi-muted)' }}>{maxAttendance}</text>
+                )}
+                <text x={padLeft - 6} y={padTop + plotH + 4} textAnchor="end" style={{ fontFamily: 'inherit', fontSize: 10, fill: 'var(--color-navi-muted)' }}>0</text>
+              </svg>
             </div>
           </section>
         )}
@@ -380,6 +611,7 @@ function Home({ data, matches = [] }) {
             </ul>
           )}
         </section>
+      </div>
       </div>
     </div>
   )

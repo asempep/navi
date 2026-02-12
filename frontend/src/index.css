@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
 @theme {
+  /* 모바일 기준 뷰포트 (개발/디자인 기준) */
+  --mobile-viewport-width: 1179px;
+  --mobile-viewport-height: 2556px;
   /* 배경: 화이트 톤 */
   --color-navi-bg: #ffffff;
   --color-navi-card: #f8f9fa;

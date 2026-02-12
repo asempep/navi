@@ -12,10 +12,18 @@ const TABS = [
   { id: 'attendance', path: '/attendance', label: '출석' },
 ]
 
+// 버튼 공통 스타일 (바디에서 사용하는 것과 동일한 크기)
+const BTN_BASE = 'inline-flex items-center justify-center min-h-[36px] px-2 py-1.5 rounded-md border text-sm font-medium no-underline transition-colors shrink-0'
+const BTN_ACTIVE = 'bg-navi-button border-navi-button text-white'
+const BTN_INACTIVE = 'bg-navi-bg border-navi-border text-navi-text hover:bg-navi-border hover:border-navi-button'
+
 export default function Header() {
   const location = useLocation()
   const isAdmin = location.pathname === '/admin'
+  const isHome = location.pathname === '/' || location.pathname === '/home'
   const currentPath = location.pathname.startsWith('/player') ? '/home' : location.pathname
+  // 홈일 때는 탭/버튼을 바디로 옮겼으므로 헤더에는 로고만
+  const showNavAndButtons = !isAdmin && !isHome
 
   return (
     <header className="sticky top-0 z-10 border-b border-navi-border bg-navi-card px-4 py-3 sm:px-6 sm:py-4 flex flex-wrap justify-between items-start gap-3">
@@ -27,7 +35,7 @@ export default function Header() {
         >
           NATUS VINCERE
         </Link>
-        {!isAdmin && (
+        {showNavAndButtons && (
           <nav className="flex flex-nowrap gap-2 overflow-x-auto overflow-y-hidden -mx-1 py-1 scrollbar-hide mt-3" aria-label="메인 메뉴" style={{ WebkitOverflowScrolling: 'touch' }}>
             {TABS.map((t) => (
               <NavLink
@@ -35,11 +43,7 @@ export default function Header() {
                 to={t.path}
                 end={t.path === '/home'}
                 className={({ isActive }) =>
-                  `shrink-0 min-h-[44px] px-3 py-2 rounded-lg border text-sm font-medium transition-colors ${
-                    isActive || currentPath === t.path
-                      ? 'bg-navi-button border-navi-button text-white'
-                      : 'bg-navi-bg border-navi-border text-navi-text hover:bg-navi-border hover:border-navi-button'
-                  }`
+                  `${BTN_BASE} ${isActive || currentPath === t.path ? BTN_ACTIVE : BTN_INACTIVE}`
                 }
                 isActive={t.path === '/home' ? (_, loc) => loc.pathname === '/' || loc.pathname === '/home' : undefined}
               >
@@ -49,45 +53,44 @@ export default function Header() {
           </nav>
         )}
       </div>
-      <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
-        {!isAdmin && (
-          <div className="flex flex-wrap gap-2 order-2 w-full sm:w-auto sm:order-1 justify-end" aria-label="외부 링크">
-            <a
-              href="https://res.isdc.co.kr/index.do"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block px-3 py-2 text-sm border border-navi-border rounded-lg bg-navi-bg text-navi-text no-underline hover:bg-navi-border hover:border-navi-button transition-colors"
-            >
-              구장예약
-            </a>
-            <a
-              href="https://www.youtube.com/@NatusVincere-mn3qc"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block px-3 py-2 text-sm border border-navi-border rounded-lg bg-navi-bg text-navi-text no-underline hover:bg-navi-border hover:border-navi-button transition-colors"
-            >
-              유튜브
-            </a>
-            <a
-              href="https://www.instagram.com/fc_natusvincere?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block px-3 py-2 text-sm border border-navi-border rounded-lg bg-navi-bg text-navi-text no-underline hover:bg-navi-border hover:border-navi-button transition-colors"
-            >
-              인스타
-            </a>
-          </div>
-        )}
-        {isAdmin ? (
-          <Link to="/home" className="inline-block px-4 py-2 text-sm border border-navi-border rounded-lg bg-navi-bg text-navi-muted no-underline hover:bg-navi-border hover:border-navi-button transition-colors">
-            메인으로
-          </Link>
-        ) : (
-          <Link to="/admin" className="inline-block px-4 py-2 text-sm border border-navi-border rounded-lg bg-navi-bg text-navi-text no-underline hover:bg-navi-border hover:border-navi-button transition-colors">
+      {showNavAndButtons && (
+        <div className="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end" aria-label="외부 링크 및 관리">
+          <a
+            href="https://res.isdc.co.kr/index.do"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${BTN_BASE} ${BTN_INACTIVE}`}
+          >
+            구장예약
+          </a>
+          <a
+            href="https://www.youtube.com/@NatusVincere-mn3qc"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${BTN_BASE} ${BTN_INACTIVE}`}
+          >
+            유튜브
+          </a>
+          <a
+            href="https://www.instagram.com/fc_natusvincere?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${BTN_BASE} ${BTN_INACTIVE}`}
+          >
+            인스타
+          </a>
+          <Link to="/admin" className={`${BTN_BASE} ${BTN_INACTIVE}`}>
             관리
           </Link>
-        )}
-      </div>
+        </div>
+      )}
+      {isAdmin && (
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <Link to="/home" className={`${BTN_BASE} ${BTN_INACTIVE} text-navi-muted`}>
+            메인으로
+          </Link>
+        </div>
+      )}
     </header>
   )
 }
