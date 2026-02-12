@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { CARD_BASE, CARD_TITLE } from './cardStyles'
 
 /** 홈: 득점 순위 테이블 (상위 5명, 접이식) */
-export default function HomeGoalRanking({ topGoals, maxGoalInTop, isOpen, onToggle }) {
+export default function HomeGoalRanking({ topGoals, isOpen, onToggle }) {
   return (
     <section className={CARD_BASE}>
       <button
@@ -22,13 +22,12 @@ export default function HomeGoalRanking({ topGoals, maxGoalInTop, isOpen, onTogg
                 <tr>
                   <th className="text-left py-1.5 px-2 text-navi-muted font-semibold w-10">#</th>
                   <th className="text-left py-1.5 px-2 text-navi-muted font-semibold">선수</th>
-                  <th className="text-left py-1.5 px-2 text-navi-muted font-semibold w-24" />
                   <th className="text-right py-1.5 px-2 text-navi-muted font-semibold w-14">골</th>
                 </tr>
               </thead>
               <tbody>
                 {topGoals.length === 0 ? (
-                  <tr><td colSpan={4} className="py-4 text-center text-navi-muted">기록 없음</td></tr>
+                  <tr><td colSpan={3} className="py-4 text-center text-navi-muted">기록 없음</td></tr>
                 ) : (
                   topGoals.map((r) => (
                     <tr key={r.rank} className="hover:bg-black/5">
@@ -37,14 +36,6 @@ export default function HomeGoalRanking({ topGoals, maxGoalInTop, isOpen, onTogg
                         <Link to={`/player/${encodeURIComponent(r.playerName)}`} className="text-xs text-navi-accent no-underline hover:underline">
                           {r.playerName}
                         </Link>
-                      </td>
-                      <td className="py-1.5 px-2">
-                        <div className="h-2 bg-navi-bg rounded overflow-hidden min-w-[60px]">
-                          <div
-                            className="h-full bg-navi-accent rounded"
-                            style={{ width: `${(r.value / maxGoalInTop) * 100}%` }}
-                          />
-                        </div>
                       </td>
                       <td className="py-1.5 px-2 text-right font-semibold">{r.value}</td>
                     </tr>

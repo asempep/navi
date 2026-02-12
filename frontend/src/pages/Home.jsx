@@ -42,7 +42,6 @@ function Home({ data, matches = [], attendanceLogs = [] }) {
 
   // 득점 순위 상위 5명
   const topGoals = goalRanking.slice(0, 5)
-  const maxGoalInTop = Math.max(...topGoals.map((r) => r.value), 1)
 
   // 승/무/패 비율 (도넛)
   const total = seasonStats.totalMatches || 1
@@ -74,7 +73,7 @@ function Home({ data, matches = [], attendanceLogs = [] }) {
 
         {/* 핵심 지표: 득점 / 도움 / 출석 순위 3단 */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <HomeGoalRanking topGoals={topGoals} maxGoalInTop={maxGoalInTop} isOpen={openSections.goals} onToggle={() => toggleSection('goals')} />
+          <HomeGoalRanking topGoals={topGoals} isOpen={openSections.goals} onToggle={() => toggleSection('goals')} />
           <HomeAssistRanking assistRanking={assistRanking} isOpen={openSections.assists} onToggle={() => toggleSection('assists')} />
           <HomeAttendanceRanking attendanceRanking={attendanceRanking} isOpen={openSections.attendance} onToggle={() => toggleSection('attendance')} />
         </div>
