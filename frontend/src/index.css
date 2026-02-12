@@ -1,33 +1,40 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@import "tailwindcss";
+
+@theme {
+  --color-navi-bg: #152a52;
+  --color-navi-card: #2A508C;
+  --color-navi-border: #3d6ab5;
+  /* 금색 계열 글자 (기존 로고 #E3B472 톤) */
+  --color-navi-text: #E8DCC4;
+  --color-navi-muted: #C9B896;
+  --color-navi-accent: #E3B472;
+  /* 버튼/활성 탭용 (골드와 구분되는 블루 톤) */
+  --color-navi-button: #4a7bc8;
+  --color-navi-win: #3fb950;
+  --color-navi-draw: #d29922;
+  --color-navi-lose: #f85149;
+  --font-sans: 'Noto Sans KR', -apple-system, sans-serif;
+  --font-cinzel: 'Cinzel', serif;
 }
 
-:root {
-  /* 메인 테마: #2A508C, 포인트: #FFFF12 */
-  --bg: #152a52;
-  --card: #2A508C;
-  --border: #3d6ab5;
-  --text: #e8eef5;
-  --muted: #9ab3d4;
-  --accent: #FFFF12;
-  --win: #3fb950;
-  --draw: #d29922;
-  --lose: #f85149;
-  --font: 'Noto Sans KR', -apple-system, sans-serif;
+* {
+  box-sizing: border-box;
 }
 
 body {
-  font-family: var(--font);
-  background: linear-gradient(180deg, #152a52 0%, #2A508C 50%, #1a3066 100%);
-  color: var(--text);
+  font-family: var(--font-sans);
+  color: var(--color-navi-text);
   min-height: 100vh;
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  background: linear-gradient(180deg, #152a52 0%, #2A508C 50%, #1a3066 100%);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 a {
-  color: var(--accent);
+  color: var(--color-navi-accent);
   text-decoration: none;
 }
 
@@ -37,4 +44,22 @@ a:hover {
 
 #root {
   min-height: 100vh;
+}
+
+button, a, input, select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 768px) {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }

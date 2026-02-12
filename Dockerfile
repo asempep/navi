@@ -8,7 +8,6 @@ COPY backend/.mvn .mvn
 COPY backend/pom.xml .
 
 RUN ./mvnw dependency:go-offline -B
-
 COPY backend/src src
 RUN ./mvnw package -DskipTests -B
 

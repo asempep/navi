@@ -1,6 +1,3 @@
-/**
- * 도움 탭: 경기별 도움/골 로그
- */
 function formatDate(dateStr) {
   if (!dateStr) return '-'
   const d = new Date(dateStr)
@@ -9,31 +6,31 @@ function formatDate(dateStr) {
 
 function Assists({ logs }) {
   if (!logs || logs.length === 0) {
-    return <p className="empty">도움 기록이 없습니다.</p>
+    return <p className="py-8 text-center text-navi-muted">도움 기록이 없습니다.</p>
   }
 
   return (
-    <div className="card">
-      <h2>도움 / 골 기록</h2>
-      <div className="table-wrap">
-        <table>
+    <div className="bg-navi-card border border-navi-border rounded-xl p-4 sm:p-5 mb-4">
+      <h2 className="text-sm font-semibold text-navi-muted mb-3">도움 / 골 기록</h2>
+      <div className="overflow-x-auto -mx-2 px-2">
+        <table className="w-full border-collapse text-sm">
           <thead>
             <tr>
-              <th>경기일</th>
-              <th>상대</th>
-              <th>선수</th>
-              <th>도움</th>
-              <th>골</th>
+              <th className="text-left py-2 px-3 text-navi-muted font-semibold">경기일</th>
+              <th className="text-left py-2 px-3 text-navi-muted font-semibold">상대</th>
+              <th className="text-left py-2 px-3 text-navi-muted font-semibold">선수</th>
+              <th className="text-left py-2 px-3 text-navi-muted font-semibold">도움</th>
+              <th className="text-left py-2 px-3 text-navi-muted font-semibold">골</th>
             </tr>
           </thead>
           <tbody>
             {logs.map((row, idx) => (
-              <tr key={idx} className="log-row">
-                <td className="date">{formatDate(row.matchDate)}</td>
-                <td>{row.opponent || '-'}</td>
-                <td className="player">{row.playerName}</td>
-                <td><strong>{row.assists}</strong></td>
-                <td>{row.goals}</td>
+              <tr key={idx} className="hover:bg-white/5">
+                <td className="py-2 px-3 text-navi-muted text-xs">{formatDate(row.matchDate)}</td>
+                <td className="py-2 px-3">{row.opponent || '-'}</td>
+                <td className="py-2 px-3 font-semibold">{row.playerName}</td>
+                <td className="py-2 px-3"><strong>{row.assists}</strong></td>
+                <td className="py-2 px-3">{row.goals}</td>
               </tr>
             ))}
           </tbody>

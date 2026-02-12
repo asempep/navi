@@ -10,7 +10,6 @@ import Assists from './pages/Assists'
 import Attendance from './pages/Attendance'
 import Admin from './pages/Admin'
 import AdminMatchEdit from './pages/AdminMatchEdit'
-import './App.css'
 
 function App() {
   const [homeData, setHomeData] = useState(null)
@@ -71,9 +70,9 @@ function App() {
   }
   if (isAdminPage) {
     return (
-      <div className="app">
+      <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="main main--admin">
+        <main className="flex-1 px-4 py-6 max-w-[1100px] w-full mx-auto">
           <Admin />
         </main>
       </div>
@@ -82,10 +81,10 @@ function App() {
 
   if (loading) {
     return (
-      <div className="app">
+      <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="main">
-          <p className="loading">로딩 중...</p>
+        <main className="flex-1 px-4 py-6 max-w-[1100px] w-full mx-auto">
+          <p className="text-center py-8 text-navi-muted">로딩 중...</p>
         </main>
       </div>
     )
@@ -93,10 +92,10 @@ function App() {
 
   if (error) {
     return (
-      <div className="app">
+      <div className="min-h-screen flex flex-col">
         <Header />
-        <main className="main">
-          <p className="error">
+        <main className="flex-1 px-4 py-6 max-w-[1100px] w-full mx-auto">
+          <p className="text-center py-8 text-red-500">
             {error}
             <br />
             <small>
@@ -111,12 +110,12 @@ function App() {
   }
 
   return (
-    <div className="app">
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="main">
+      <main className="flex-1 px-4 py-6 max-w-[1100px] w-full mx-auto sm:px-6">
         <Routes>
-          <Route path="/" element={<Home data={homeData} />} />
-          <Route path="/home" element={<Home data={homeData} />} />
+          <Route path="/" element={<Home data={homeData} matches={matches} />} />
+          <Route path="/home" element={<Home data={homeData} matches={matches} />} />
           <Route path="/matches" element={<AllMatches matches={matches} />} />
           <Route path="/goals" element={<Goals logs={goalLogs} />} />
           <Route path="/assists" element={<Assists logs={assistLogs} />} />
