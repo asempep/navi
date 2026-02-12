@@ -183,36 +183,42 @@ function Home({ data, matches = [], attendanceLogs = [] }) {
   ]
 
   return (
-    <div className="flex flex-row gap-4 lg:gap-6">
-      {/* 화면 왼쪽: 탭 + 외부 링크 + 관리 (1열 세로 나열) */}
-      <nav className="flex flex-col gap-2 shrink-0 w-full sm:w-auto sm:min-w-[140px]" aria-label="메인 메뉴 및 링크">
+    <div className="flex flex-col md:flex-row gap-3 md:gap-4 lg:gap-6">
+      {/* 모바일: 상단 3x3 버튼 그리드 / 데스크톱: 좌측 세로 메뉴 */}
+      <nav
+        className="grid grid-cols-3 gap-1.5 md:flex md:flex-col md:gap-2 shrink-0 w-full md:w-auto md:min-w-[140px] order-first md:order-none"
+        aria-label="메인 메뉴 및 링크"
+      >
         {tabs.map((t) => (
           <NavLink
             key={t.path}
             to={t.path}
             end={t.end}
             isActive={t.end ? (_, loc) => loc.pathname === '/' || loc.pathname === '/home' : undefined}
-            className={({ isActive }) => `${btnBase} w-full sm:w-auto justify-center ${isActive ? btnActive : btnInactive}`}
+            className={({ isActive }) =>
+              `${btnBase} min-h-[32px] px-1.5 py-1 text-xs md:min-h-[36px] md:px-2 md:py-1.5 md:text-sm w-full justify-center ${isActive ? btnActive : btnInactive}`
+            }
           >
             {t.label}
           </NavLink>
         ))}
-        <a href="https://res.isdc.co.kr/index.do" target="_blank" rel="noopener noreferrer" className={`${btnBase} w-full sm:w-auto justify-center ${btnInactive}`}>
+        <a href="https://res.isdc.co.kr/index.do" target="_blank" rel="noopener noreferrer" className={`${btnBase} min-h-[32px] px-1.5 py-1 text-xs md:min-h-[36px] md:px-2 md:py-1.5 md:text-sm w-full justify-center ${btnInactive}`}>
           구장예약
         </a>
-        <a href="https://www.youtube.com/@NatusVincere-mn3qc" target="_blank" rel="noopener noreferrer" className={`${btnBase} w-full sm:w-auto justify-center ${btnInactive}`}>
+        <a href="https://www.youtube.com/@NatusVincere-mn3qc" target="_blank" rel="noopener noreferrer" className={`${btnBase} min-h-[32px] px-1.5 py-1 text-xs md:min-h-[36px] md:px-2 md:py-1.5 md:text-sm w-full justify-center ${btnInactive}`}>
           유튜브
         </a>
-        <a href="https://www.instagram.com/fc_natusvincere?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className={`${btnBase} w-full sm:w-auto justify-center ${btnInactive}`}>
+        <a href="https://www.instagram.com/fc_natusvincere?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className={`${btnBase} min-h-[32px] px-1.5 py-1 text-xs md:min-h-[36px] md:px-2 md:py-1.5 md:text-sm w-full justify-center ${btnInactive}`}>
           인스타
         </a>
-        <Link to="/admin" className={`${btnBase} w-full sm:w-auto justify-center ${btnInactive}`}>
+        <Link to="/admin" className={`${btnBase} min-h-[32px] px-1.5 py-1 text-xs md:min-h-[36px] md:px-2 md:py-1.5 md:text-sm w-full justify-center ${btnInactive}`}>
           관리
         </Link>
       </nav>
 
-      <div className="min-w-0 flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-      {/* 1열: 요약 카드 4개 + 득점 vs 실점 + 득점 순위 */}
+      {/* 대시보드: 모바일에서 메인 영역으로 표시 */}
+      <div className="min-w-0 flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 order-last md:order-none">
+      {/* 1열: 요약 카드 4개 + 다음 경기 + 득점 vs 실점 + 득점 순위 */}
       <div className="flex flex-col gap-4">
         <section className="grid grid-cols-2 gap-2 sm:gap-3">
           <Link to="/matches" className={`${cardBase} flex flex-col gap-1 no-underline text-inherit hover:border-navi-accent/50 transition-colors cursor-pointer`}>
@@ -235,6 +241,24 @@ function Home({ data, matches = [], attendanceLogs = [] }) {
             <span className="text-2xl font-bold text-navi-lose">{seasonStats.losses}</span>
             <span className="text-xs text-navi-muted">패배</span>
           </Link>
+        </section>
+
+        <section className={cardBase}>
+          <h2 className={cardTitle}>다음 경기</h2>
+          {nextMatches.length === 0 ? (
+            <p className="py-4 text-center text-navi-muted text-sm">등록된 다음 경기가 없습니다.</p>
+          ) : (
+            <ul className="list-none p-0 m-0 space-y-2">
+              {nextMatches.slice(0, 3).map((m) => (
+                <li key={m.id} className="py-2 border-b border-navi-border last:border-0 text-sm">
+                  <span className="font-semibold text-navi-accent">{m.matchDate}</span>
+                  {m.matchTime != null && <span className="ml-2 text-navi-muted">{formatMatchTime(m.matchTime)}</span>}
+                  <span className="block font-semibold text-navi-text">vs {m.opponent}</span>
+                  {m.venue && <span className="text-navi-muted text-xs">{m.venue}</span>}
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
 
         <section className={cardBase}>
@@ -279,7 +303,7 @@ function Home({ data, matches = [], attendanceLogs = [] }) {
                 <tr>
                   <th className="text-left py-2 px-2 text-navi-muted font-semibold w-10">#</th>
                   <th className="text-left py-2 px-2 text-navi-muted font-semibold">선수</th>
-                  <th className="text-left py-2 px-2 text-navi-muted font-semibold w-24">인기도</th>
+                  <th className="text-left py-2 px-2 text-navi-muted font-semibold w-24" />
                   <th className="text-right py-2 px-2 text-navi-muted font-semibold w-14">골</th>
                 </tr>
               </thead>
@@ -290,8 +314,8 @@ function Home({ data, matches = [], attendanceLogs = [] }) {
                   topGoals.map((r) => (
                     <tr key={r.rank} className="hover:bg-black/5">
                       <td className="py-2 px-2 font-semibold text-navi-accent">{r.rank}</td>
-                      <td className="py-2 px-2">
-                        <Link to={`/player/${encodeURIComponent(r.playerName)}`} className="text-navi-accent no-underline hover:underline">
+                      <td className="py-2 px-2 whitespace-nowrap">
+                        <Link to={`/player/${encodeURIComponent(r.playerName)}`} className="text-xs text-navi-accent no-underline hover:underline">
                           {r.playerName}
                         </Link>
                       </td>
@@ -316,7 +340,7 @@ function Home({ data, matches = [], attendanceLogs = [] }) {
         </section>
       </div>
 
-      {/* 2열: 승/무/패 도넛, 다음 경기, 월별 경기 수 */}
+      {/* 2열: 승/무/패 도넛, 월별 경기 수 */}
       <div className="flex flex-col gap-4">
         <section className={cardBase}>
           <h2 className={cardTitle}>승/무/패 비율</h2>
@@ -359,24 +383,6 @@ function Home({ data, matches = [], attendanceLogs = [] }) {
               <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-navi-lose" />패 {seasonStats.losses}</span>
             </div>
           </div>
-        </section>
-
-        <section className={cardBase}>
-          <h2 className={cardTitle}>다음 경기</h2>
-          {nextMatches.length === 0 ? (
-            <p className="py-4 text-center text-navi-muted text-sm">등록된 다음 경기가 없습니다.</p>
-          ) : (
-            <ul className="list-none p-0 m-0 space-y-2">
-              {nextMatches.slice(0, 3).map((m) => (
-                <li key={m.id} className="py-2 border-b border-navi-border last:border-0 text-sm">
-                  <span className="font-semibold text-navi-accent">{m.matchDate}</span>
-                  {m.matchTime != null && <span className="ml-2 text-navi-muted">{formatMatchTime(m.matchTime)}</span>}
-                  <span className="block font-semibold text-navi-text">vs {m.opponent}</span>
-                  {m.venue && <span className="text-navi-muted text-xs">{m.venue}</span>}
-                </li>
-              ))}
-            </ul>
-          )}
         </section>
 
         {matches.length > 0 && (
