@@ -1,6 +1,6 @@
 /**
  * 앱 상단 헤더
- * - URL 기반: 로고 → /, 탭 → /home, /matches, /goals, /assists, /attendance, 관리 → /admin
+ * - URL 기반: 로고 → /home, 탭 → /home, /matches, /goals, /assists, /attendance, 관리 → /admin
  */
 import { Link, NavLink, useLocation } from 'react-router-dom'
 
@@ -20,7 +20,7 @@ const BTN_INACTIVE = 'bg-navi-bg border-navi-border text-navi-text hover:bg-navi
 export default function Header() {
   const location = useLocation()
   const isAdmin = location.pathname === '/admin'
-  const isHome = location.pathname === '/' || location.pathname === '/home'
+  const isHome = location.pathname === '/home'
   const currentPath = location.pathname.startsWith('/player') ? '/home' : location.pathname
   // 홈일 때는 탭/버튼을 바디로 옮겼으므로 헤더에는 로고만
   const showNavAndButtons = !isAdmin && !isHome
@@ -29,7 +29,7 @@ export default function Header() {
     <header className="sticky top-0 z-10 border-b border-navi-border bg-navi-card px-4 py-3 sm:px-6 sm:py-4 flex flex-wrap justify-between items-start gap-3">
       <div className="flex-1 min-w-0">
         <Link
-          to="/"
+          to="/home"
           className="block font-cinzel font-bold text-navi-accent text-2xl sm:text-4xl md:text-5xl leading-tight rounded no-underline hover:opacity-90 transition-opacity"
           aria-label="홈으로 이동"
         >
@@ -45,7 +45,7 @@ export default function Header() {
                 className={({ isActive }) =>
                   `${BTN_BASE} ${isActive || currentPath === t.path ? BTN_ACTIVE : BTN_INACTIVE}`
                 }
-                isActive={t.path === '/home' ? (_, loc) => loc.pathname === '/' || loc.pathname === '/home' : undefined}
+                isActive={t.path === '/home' ? (_, loc) => loc.pathname === '/home' : undefined}
               >
                 {t.label}
               </NavLink>

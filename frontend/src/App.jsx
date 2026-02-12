@@ -56,7 +56,7 @@ function App() {
 
   // 홈 화면 진입 시마다 홈 데이터 재요청 (선수 명단 툴팁 등 최신 반영)
   useEffect(() => {
-    if (location.pathname !== '/' && location.pathname !== '/home') return
+    if (location.pathname !== '/home') return
     let cancelled = false
     fetchHome()
       .then((home) => { if (!cancelled) setHomeData(home) })
@@ -114,7 +114,7 @@ function App() {
       <Header />
       <main className="flex-1 px-4 py-6 max-w-[1179px] w-full mx-auto sm:px-6">
         <Routes>
-          <Route path="/" element={<Home data={homeData} matches={matches} attendanceLogs={attendanceLogs} />} />
+          <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<Home data={homeData} matches={matches} attendanceLogs={attendanceLogs} />} />
           <Route path="/matches" element={<AllMatches matches={matches} />} />
           <Route path="/goals" element={<Goals logs={goalLogs} />} />

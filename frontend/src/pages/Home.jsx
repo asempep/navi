@@ -194,7 +194,7 @@ function Home({ data, matches = [], attendanceLogs = [] }) {
             key={t.path}
             to={t.path}
             end={t.end}
-            isActive={t.end ? (_, loc) => loc.pathname === '/' || loc.pathname === '/home' : undefined}
+            isActive={t.end ? (_, loc) => loc.pathname === '/home' : undefined}
             className={({ isActive }) =>
               `${btnBase} min-h-[32px] px-1.5 py-1 text-xs md:min-h-[36px] md:px-2 md:py-1.5 md:text-sm w-full justify-center ${isActive ? btnActive : btnInactive}`
             }
