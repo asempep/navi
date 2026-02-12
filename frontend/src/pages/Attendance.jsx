@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { MainNavSidebar } from '../components/navConfig'
 
 function formatDate(dateStr) {
   if (!dateStr) return '-'
@@ -8,10 +9,20 @@ function formatDate(dateStr) {
 
 function Attendance({ logs }) {
   if (!logs || logs.length === 0) {
-    return <p className="py-8 text-center text-navi-muted">출석 기록이 없습니다.</p>
+    return (
+      <div className="flex flex-col md:flex-row gap-3 md:gap-4 lg:gap-6">
+        <MainNavSidebar />
+        <div className="min-w-0 flex-1 order-last md:order-none">
+          <p className="py-8 text-center text-navi-muted">출석 기록이 없습니다.</p>
+        </div>
+      </div>
+    )
   }
 
   return (
+    <div className="flex flex-col md:flex-row gap-3 md:gap-4 lg:gap-6">
+      <MainNavSidebar />
+      <div className="min-w-0 flex-1 order-last md:order-none">
     <div className="bg-navi-card border border-navi-border rounded-xl p-4 sm:p-5 mb-4">
       <h2 className="text-sm font-semibold text-navi-muted mb-3">경기별 출석</h2>
       <div className="flex flex-col gap-4">
@@ -28,7 +39,7 @@ function Attendance({ logs }) {
                   <Link
                     key={name}
                     to={`/player/${encodeURIComponent(name)}`}
-                    className="bg-navi-border/20 text-navi-text px-2 py-1 rounded-md text-sm no-underline hover:bg-navi-accent/20 hover:text-navi-accent transition-colors"
+                    className="bg-navi-border/20 text-navi-text px-3 py-1.5 rounded-lg text-sm no-underline hover:bg-navi-accent/20 hover:text-navi-accent transition-colors"
                   >
                     {name}
                   </Link>
@@ -39,6 +50,8 @@ function Attendance({ logs }) {
             </div>
           </div>
         ))}
+      </div>
+    </div>
       </div>
     </div>
   )

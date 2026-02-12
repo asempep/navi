@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { fetchPlayerDetail } from '../api'
+import { MainNavSidebar } from '../components/navConfig'
+
+const pageLayout = (content) => (
+  <div className="flex flex-col md:flex-row gap-3 md:gap-4 lg:gap-6">
+    <MainNavSidebar />
+    <div className="min-w-0 flex-1 order-last md:order-none max-w-md mx-auto py-4 w-full">
+      {content}
+    </div>
+  </div>
+)
 
 function PlayerDetail() {
   const { name } = useParams()
@@ -28,55 +38,28 @@ function PlayerDetail() {
     return () => { cancelled = true }
   }, [playerName])
 
-  const backLink = (
-    <Link to="/home" className="inline-block py-2 mb-4 text-navi-accent no-underline hover:opacity-80 transition-opacity text-sm">
-      ← 홈으로
-    </Link>
-  )
-
   const card = 'bg-navi-card border border-navi-border rounded-xl p-4 sm:p-5'
 
   if (!playerName) {
-    return (
-      <div className="max-w-md mx-auto py-4">
-        {backLink}
-        <p className="py-8 text-center text-navi-muted">선수 이름이 없습니다.</p>
-      </div>
-    )
+    return pageLayout(<p className="py-8 text-center text-navi-muted">선수 이름이 없습니다.</p>)
   }
 
   if (loading) {
-    return (
-      <div className="max-w-md mx-auto py-4">
-        {backLink}
-        <p className="py-8 text-center text-navi-muted">로딩 중...</p>
-      </div>
-    )
+    return pageLayout(<p className="py-8 text-center text-navi-muted">로딩 중...</p>)
   }
 
   if (error) {
-    return (
-      <div className="max-w-md mx-auto py-4">
-        {backLink}
-        <p className="py-8 text-center text-red-500">{error}</p>
-      </div>
-    )
+    return pageLayout(<p className="py-8 text-center text-red-500">{error}</p>)
   }
 
   if (!detail) {
-    return (
-      <div className="max-w-md mx-auto py-4">
-        {backLink}
-        <p className="py-8 text-center text-navi-muted">해당 선수를 찾을 수 없습니다.</p>
-      </div>
-    )
+    return pageLayout(<p className="py-8 text-center text-navi-muted">해당 선수를 찾을 수 없습니다.</p>)
   }
 
   const matchRecords = detail.matchRecords || []
 
-  return (
-    <div className="max-w-md mx-auto py-4">
-      {backLink}
+  return pageLayout(
+    <>
       <section className={`${card} mb-4`}>
         <h2 className="text-xl font-bold text-navi-text mb-4">{detail.playerName}</h2>
         <dl className="flex flex-col gap-3 m-0">
@@ -120,7 +103,7 @@ function PlayerDetail() {
           </div>
         </section>
       )}
-    </div>
+    </>
   )
 }
 

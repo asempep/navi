@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { MainNavSidebar } from '../components/navConfig'
 
 function formatDate(dateStr) {
   if (!dateStr) return '-'
@@ -53,12 +54,22 @@ function AllMatches({ matches }) {
   }
 
   if (!matches || matches.length === 0) {
-    return <p className="py-8 text-center text-navi-muted">등록된 경기가 없습니다.</p>
+    return (
+      <div className="flex flex-col md:flex-row gap-3 md:gap-4 lg:gap-6">
+        <MainNavSidebar />
+        <div className="min-w-0 flex-1 order-last md:order-none">
+          <p className="py-8 text-center text-navi-muted">등록된 경기가 없습니다.</p>
+        </div>
+      </div>
+    )
   }
 
   return (
+    <div className="flex flex-col md:flex-row gap-3 md:gap-4 lg:gap-6">
+      <MainNavSidebar />
+      <div className="min-w-0 flex-1 order-last md:order-none">
     <div className="bg-navi-card border border-navi-border rounded-xl p-4 sm:p-5 mb-4">
-      <h2 className="text-sm font-semibold text-navi-muted mb-3">전체 경기</h2>
+      <h2 className="text-xs font-semibold text-navi-muted mb-2">전체 경기</h2>
 
       {/* 승/무/패 필터 버튼 */}
       <div className="flex flex-wrap gap-2 mb-4">
@@ -85,37 +96,39 @@ function AllMatches({ matches }) {
       </div>
 
       <div className="overflow-x-auto -mx-2 px-2">
-        <table className="w-full border-collapse text-sm">
+        <table className="w-full border-collapse text-xs">
           <thead>
             <tr>
-              <th className="text-left py-2 px-3 text-navi-muted font-semibold">경기일</th>
-              <th className="text-left py-2 px-3 text-navi-muted font-semibold">상대</th>
-              <th className="text-left py-2 px-3 text-navi-muted font-semibold">스코어</th>
-              <th className="text-left py-2 px-3 text-navi-muted font-semibold">결과</th>
+              <th className="text-left py-1.5 px-2 text-navi-muted font-semibold whitespace-nowrap">경기일</th>
+              <th className="text-left py-1.5 px-2 text-navi-muted font-semibold whitespace-nowrap">상대</th>
+              <th className="text-left py-1.5 px-2 text-navi-muted font-semibold whitespace-nowrap">스코어</th>
+              <th className="text-left py-1.5 px-2 text-navi-muted font-semibold whitespace-nowrap">결과</th>
             </tr>
           </thead>
           <tbody>
             {filteredMatches.length === 0 ? (
               <tr>
-                <td colSpan={4} className="py-6 text-center text-navi-muted">
+                <td colSpan={4} className="py-4 text-center text-navi-muted">
                   해당 결과의 경기가 없습니다.
                 </td>
               </tr>
             ) : (
             filteredMatches.map((m) => (
               <tr key={m.id} className="hover:bg-black/5">
-                <td className="py-2 px-3 text-navi-muted text-xs">
+                <td className="py-1.5 px-2 text-navi-muted whitespace-nowrap">
                   {formatDate(m.matchDate)}
                   {m.matchTime && <span className="opacity-90 ml-1"> {formatTime(m.matchTime)}</span>}
                 </td>
-                <td className="py-2 px-3">{m.opponent || '-'}</td>
-                <td className="py-2 px-3">{m.ourScore} : {m.opponentScore}</td>
-                <td className={`py-2 px-3 ${resultClass(m.result)}`}><strong>{m.result}</strong></td>
+                <td className="py-1.5 px-2 whitespace-nowrap">{m.opponent || '-'}</td>
+                <td className="py-1.5 px-2 whitespace-nowrap">{m.ourScore} : {m.opponentScore}</td>
+                <td className={`py-1.5 px-2 whitespace-nowrap ${resultClass(m.result)}`}><strong>{m.result}</strong></td>
               </tr>
             ))
             )}
           </tbody>
         </table>
+      </div>
+    </div>
       </div>
     </div>
   )

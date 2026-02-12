@@ -26,6 +26,11 @@
   box-sizing: border-box;
 }
 
+/* 스크롤바가 없을 때도 공간 확보 → 페이지마다 콘텐츠 너비 일정 (버튼/레이아웃 시프트 방지) */
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   font-family: var(--font-sans);
   color: var(--color-navi-text);

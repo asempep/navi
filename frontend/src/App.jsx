@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
-import { fetchHome, fetchMatches, fetchGoalLogs, fetchAssistLogs, fetchAttendanceLogs } from './api'
+import { fetchHome, fetchMatches, fetchGoalLogs, fetchAttendanceLogs } from './api'
 import Header from './components/Header'
 import Home from './pages/Home'
 import PlayerDetail from './pages/PlayerDetail'
 import AllMatches from './pages/AllMatches'
 import Goals from './pages/Goals'
-import Assists from './pages/Assists'
 import Attendance from './pages/Attendance'
 import Admin from './pages/Admin'
 import AdminMatchEdit from './pages/AdminMatchEdit'
@@ -15,7 +14,6 @@ function App() {
   const [homeData, setHomeData] = useState(null)
   const [matches, setMatches] = useState([])
   const [goalLogs, setGoalLogs] = useState([])
-  const [assistLogs, setAssistLogs] = useState([])
   const [attendanceLogs, setAttendanceLogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -30,18 +28,16 @@ function App() {
       setLoading(true)
       setError(null)
       try {
-        const [home, matchesRes, goalsRes, assistsRes, attendanceRes] = await Promise.all([
+        const [home, matchesRes, goalsRes, attendanceRes] = await Promise.all([
           fetchHome(),
           fetchMatches(),
           fetchGoalLogs(),
-          fetchAssistLogs(),
           fetchAttendanceLogs(),
         ])
         if (!cancelled) {
           setHomeData(home)
           setMatches(matchesRes)
           setGoalLogs(goalsRes)
-          setAssistLogs(assistsRes)
           setAttendanceLogs(attendanceRes)
         }
       } catch (e) {
@@ -118,7 +114,6 @@ function App() {
           <Route path="/home" element={<Home data={homeData} matches={matches} attendanceLogs={attendanceLogs} />} />
           <Route path="/matches" element={<AllMatches matches={matches} />} />
           <Route path="/goals" element={<Goals logs={goalLogs} />} />
-          <Route path="/assists" element={<Assists logs={assistLogs} />} />
           <Route path="/attendance" element={<Attendance logs={attendanceLogs} />} />
           <Route path="/player/:name" element={<PlayerDetail />} />
         </Routes>
