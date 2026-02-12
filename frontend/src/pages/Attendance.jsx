@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 function formatDate(dateStr) {
   if (!dateStr) return '-'
   const d = new Date(dateStr)
@@ -23,9 +25,13 @@ function Attendance({ logs }) {
             <div className="flex flex-wrap gap-1.5">
               {row.attendedPlayerNames && row.attendedPlayerNames.length > 0 ? (
                 row.attendedPlayerNames.map((name) => (
-                  <span key={name} className="bg-navi-bg px-2 py-1 rounded-md text-sm">
+                  <Link
+                    key={name}
+                    to={`/player/${encodeURIComponent(name)}`}
+                    className="bg-navi-border/20 text-navi-text px-2 py-1 rounded-md text-sm no-underline hover:bg-navi-accent/20 hover:text-navi-accent transition-colors"
+                  >
                     {name}
-                  </span>
+                  </Link>
                 ))
               ) : (
                 <span className="text-navi-muted text-sm">출석자 없음</span>

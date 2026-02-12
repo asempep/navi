@@ -8,15 +8,16 @@ export default {
     extend: {
       colors: {
         navi: {
-          bg: '#152a52',
-          card: '#2A508C',
-          border: '#3d6ab5',
-          text: '#e8eef5',
-          muted: '#9ab3d4',
-          accent: '#FFFF12',
-          win: '#3fb950',
-          draw: '#d29922',
-          lose: '#f85149',
+          bg: '#ffffff',
+          card: '#f8f9fa',
+          border: '#dee2e6',
+          text: '#152a52',
+          muted: '#5a6c7d',
+          accent: '#d4af37',
+          button: '#152a52',
+          win: '#2e7d32',
+          draw: '#ed6c02',
+          lose: '#c62828',
         },
       },
       fontFamily: {

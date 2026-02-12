@@ -25,7 +25,7 @@ function Goals({ logs }) {
           </thead>
           <tbody>
             {logs.map((row, idx) => (
-              <tr key={idx} className="hover:bg-white/5">
+              <tr key={idx} className="hover:bg-black/5">
                 <td className="py-2 px-3 text-navi-muted text-xs">{formatDate(row.matchDate)}</td>
                 <td className="py-2 px-3">{row.opponent || '-'}</td>
                 <td className="py-2 px-3 font-semibold">{row.playerName}</td>

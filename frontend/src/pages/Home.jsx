@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 /**
  * 홈: 대시보드형 메인 화면
  * - 상단 요약 카드 4개 (총 경기, 승, 무, 패)
- * - 득점 vs 도움 막대 비교
+ * - 득점 vs 실점 막대 비교
  * - 득점 순위 테이블 (인기도 바)
  * - 승/무/패 비율 도넛
  * - 다음 경기, 월별 경기 추이, 선수 명단
@@ -25,10 +25,13 @@ function Home({ data, matches = [] }) {
 
   const { seasonStats, nextMatches = [], goalRanking, assistRanking, attendanceRanking } = data
 
-  // 팀 총 득점 / 총 도움 (막대 차트용)
+  // 팀 총 득점 / 총 실점 (막대 차트용 — 실점 = 경기별 상대 득점 합)
   const totalGoals = useMemo(() => goalRanking.reduce((sum, r) => sum + (r.value || 0), 0), [goalRanking])
-  const totalAssists = useMemo(() => assistRanking.reduce((sum, r) => sum + (r.value || 0), 0), [assistRanking])
-  const maxGoalAssist = Math.max(totalGoals, totalAssists, 1)
+  const totalGoalsConceded = useMemo(
+    () => matches.reduce((sum, m) => sum + (Number(m.opponentScore) || 0), 0),
+    [matches]
+  )
+  const maxGoalConceded = Math.max(totalGoals, totalGoalsConceded, 1)
 
   // 득점 순위 인기도(최대 골 대비 비율) — 상위 5명
   const topGoals = goalRanking.slice(0, 5)
@@ -77,33 +80,33 @@ function Home({ data, matches = [] }) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-      {/* 1열: 요약 카드 4개 + 득점 vs 도움 + 득점 순위 */}
+      {/* 1열: 요약 카드 4개 + 득점 vs 실점 + 득점 순위 */}
       <div className="flex flex-col gap-4">
         <section className="grid grid-cols-2 gap-2 sm:gap-3">
-          <div className={`${cardBase} flex flex-col gap-1`}>
+          <Link to="/matches" className={`${cardBase} flex flex-col gap-1 no-underline text-inherit hover:border-navi-accent/50 transition-colors cursor-pointer`}>
             <span className="text-navi-muted text-sm">총 경기</span>
             <span className="text-2xl font-bold text-navi-text">{seasonStats.totalMatches}</span>
             <span className="text-xs text-navi-muted">시즌 {seasonStats.seasonYear}</span>
-          </div>
-          <div className={`${cardBase} flex flex-col gap-1`}>
+          </Link>
+          <Link to="/matches?result=승" className={`${cardBase} flex flex-col gap-1 no-underline text-inherit hover:border-navi-win/50 transition-colors cursor-pointer`}>
             <span className="text-navi-muted text-sm">승</span>
             <span className="text-2xl font-bold text-navi-win">{seasonStats.wins}</span>
             <span className="text-xs text-navi-muted">승률 {total ? Math.round((seasonStats.wins / total) * 100) : 0}%</span>
-          </div>
-          <div className={`${cardBase} flex flex-col gap-1`}>
+          </Link>
+          <Link to="/matches?result=무" className={`${cardBase} flex flex-col gap-1 no-underline text-inherit hover:border-navi-draw/50 transition-colors cursor-pointer`}>
             <span className="text-navi-muted text-sm">무</span>
             <span className="text-2xl font-bold text-navi-draw">{seasonStats.draws}</span>
             <span className="text-xs text-navi-muted">무승부</span>
-          </div>
-          <div className={`${cardBase} flex flex-col gap-1`}>
+          </Link>
+          <Link to="/matches?result=패" className={`${cardBase} flex flex-col gap-1 no-underline text-inherit hover:border-navi-lose/50 transition-colors cursor-pointer`}>
             <span className="text-navi-muted text-sm">패</span>
             <span className="text-2xl font-bold text-navi-lose">{seasonStats.losses}</span>
             <span className="text-xs text-navi-muted">패배</span>
-          </div>
+          </Link>
         </section>
 
         <section className={cardBase}>
-          <h2 className={cardTitle}>득점 vs 도움</h2>
+          <h2 className={cardTitle}>득점 vs 실점</h2>
           <div className="flex flex-col gap-3">
             <div>
               <div className="flex justify-between text-xs text-navi-muted mb-1">
@@ -113,26 +116,26 @@ function Home({ data, matches = [] }) {
               <div className="h-6 bg-navi-bg rounded overflow-hidden">
                 <div
                   className="h-full bg-navi-accent rounded transition-all duration-500"
-                  style={{ width: `${(totalGoals / maxGoalAssist) * 100}%` }}
+                  style={{ width: `${(totalGoals / maxGoalConceded) * 100}%` }}
                 />
               </div>
             </div>
             <div>
               <div className="flex justify-between text-xs text-navi-muted mb-1">
-                <span>도움</span>
-                <span>{totalAssists}도움</span>
+                <span>실점</span>
+                <span>{totalGoalsConceded}골</span>
               </div>
               <div className="h-6 bg-navi-bg rounded overflow-hidden">
                 <div
-                  className="h-full bg-navi-button rounded transition-all duration-500"
-                  style={{ width: `${(totalAssists / maxGoalAssist) * 100}%` }}
+                  className="h-full bg-navi-lose/70 rounded transition-all duration-500"
+                  style={{ width: `${(totalGoalsConceded / maxGoalConceded) * 100}%` }}
                 />
               </div>
             </div>
           </div>
           <div className="flex gap-4 mt-2 text-xs text-navi-muted">
             <span>• 득점</span>
-            <span>• 도움</span>
+            <span>• 실점</span>
           </div>
         </section>
 
@@ -153,7 +156,7 @@ function Home({ data, matches = [] }) {
                   <tr><td colSpan={4} className="py-4 text-center text-navi-muted">기록 없음</td></tr>
                 ) : (
                   topGoals.map((r) => (
-                    <tr key={r.rank} className="hover:bg-white/5">
+                    <tr key={r.rank} className="hover:bg-black/5">
                       <td className="py-2 px-2 font-semibold text-navi-accent">{r.rank}</td>
                       <td className="py-2 px-2">
                         <Link to={`/player/${encodeURIComponent(r.playerName)}`} className="text-navi-accent no-underline hover:underline">
@@ -290,7 +293,7 @@ function Home({ data, matches = [] }) {
                     <tr><td colSpan={3} className="py-4 text-center text-navi-muted">기록 없음</td></tr>
                   ) : (
                     assistRanking.slice(0, 5).map((r) => (
-                      <tr key={r.rank} className="hover:bg-white/5">
+                      <tr key={r.rank} className="hover:bg-black/5">
                         <td className="py-2 px-2 font-semibold text-navi-accent">{r.rank}</td>
                         <td className="py-2 px-2">
                           <Link to={`/player/${encodeURIComponent(r.playerName)}`} className="text-navi-accent no-underline hover:underline">{r.playerName}</Link>
@@ -330,7 +333,7 @@ function Home({ data, matches = [] }) {
                     <tr><td colSpan={3} className="py-4 text-center text-navi-muted">기록 없음</td></tr>
                   ) : (
                     attendanceRanking.slice(0, 5).map((r) => (
-                      <tr key={r.rank} className="hover:bg-white/5">
+                      <tr key={r.rank} className="hover:bg-black/5">
                         <td className="py-2 px-2 font-semibold text-navi-accent">{r.rank}</td>
                         <td className="py-2 px-2">
                           <Link to={`/player/${encodeURIComponent(r.playerName)}`} className="text-navi-accent no-underline hover:underline">{r.playerName}</Link>

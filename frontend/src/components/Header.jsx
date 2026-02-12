@@ -18,7 +18,7 @@ export default function Header() {
   const currentPath = location.pathname.startsWith('/player') ? '/home' : location.pathname
 
   return (
-    <header className="sticky top-0 z-10 border-b border-navi-border bg-gradient-to-b from-black to-navi-bg px-4 py-3 sm:px-6 sm:py-4 flex flex-wrap justify-between items-start gap-3">
+    <header className="sticky top-0 z-10 border-b border-navi-border bg-navi-card px-4 py-3 sm:px-6 sm:py-4 flex flex-wrap justify-between items-start gap-3">
       <div className="flex-1 min-w-0">
         <Link
           to="/"

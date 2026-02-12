@@ -223,7 +223,7 @@ function AdminMatchEdit({ matchId, onBack }) {
                 </tbody>
               </table>
             </div>
-            <button type="button" className="text-sm py-1.5 px-2.5 border border-navi-button text-navi-button rounded bg-transparent cursor-pointer hover:bg-white/5" onClick={addGoalAssistRow}>+ 골/도움 행 추가</button>
+            <button type="button" className="text-sm py-1.5 px-2.5 border border-navi-button text-navi-button rounded bg-transparent cursor-pointer hover:bg-black/5" onClick={addGoalAssistRow}>+ 골/도움 행 추가</button>
           </div>
           {submitStatus === 'saving' && <p className="text-sm text-navi-muted m-0">저장 중…</p>}
           {submitStatus === 'ok' && <p className="text-sm text-navi-accent m-0">수정되었습니다. 목록으로 이동합니다.</p>}

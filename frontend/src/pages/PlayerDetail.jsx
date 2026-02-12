@@ -108,7 +108,7 @@ function PlayerDetail() {
               </thead>
               <tbody>
                 {matchRecords.map((r) => (
-                  <tr key={r.matchId} className="hover:bg-white/5">
+                  <tr key={r.matchId} className="hover:bg-black/5">
                     <td className="py-2 px-3">{r.matchDate}</td>
                     <td className="py-2 px-3">{r.opponent}</td>
                     <td className="py-2 px-3"><strong>{r.goals}</strong></td>
