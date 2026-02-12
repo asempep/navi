@@ -46,7 +46,7 @@ export default function HomeWinDrawLossCompact({ seasonStats, winPct, drawPct, l
       </div>
 
       {/* 총 경기 / 승 / 무 / 패 한 줄 */}
-      <div className="min-w-0 flex-1 flex flex-wrap items-center gap-3 sm:gap-4 text-sm">
+      <div className="min-w-0 flex-1 flex flex-wrap items-center gap-3 sm:gap-4 text-xs">
         <Link to="/matches" className="flex items-baseline gap-1 no-underline text-inherit hover:opacity-80">
           <span className="text-navi-muted">총 경기</span>
           <span className="font-bold text-navi-text">{seasonStats.totalMatches}</span>

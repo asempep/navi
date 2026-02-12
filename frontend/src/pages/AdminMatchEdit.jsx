@@ -135,7 +135,7 @@ function AdminMatchEdit({ matchId, onBack }) {
     return (
       <div className="max-w-full">
         <section className={card}>
-          <p className="text-red-500 text-sm mb-3 m-0" role="alert">{loadError}</p>
+          <p className="text-red-500 text-xs mb-3 m-0" role="alert">{loadError}</p>
           <button type="button" className={btnSecondary + ' text-navi-muted'} onClick={goBack}>목록으로 돌아가기</button>
         </section>
       </div>
@@ -146,28 +146,28 @@ function AdminMatchEdit({ matchId, onBack }) {
     <div className="max-w-full">
       <section className={card}>
         <div className="flex flex-wrap justify-between items-center gap-3">
-          <h2 className="text-sm font-semibold text-navi-muted m-0">경기 수정</h2>
+          <h2 className="text-xs font-semibold text-navi-muted m-0">경기 수정</h2>
           <button type="button" className={btnSecondary + ' text-navi-muted'} onClick={goBack}>목록으로</button>
         </div>
       </section>
       <section className={card}>
-        <h2 className="text-sm font-semibold text-navi-muted mb-2">경기·통계 수정 (2026 NAVI STATISTICS)</h2>
-        <p className="text-navi-muted text-sm mb-4 leading-relaxed">아래 내용을 수정한 뒤 「수정 완료」를 누르세요. DB에 반영된 기존 값이 불러와져 있습니다.</p>
+        <h2 className="text-xs font-semibold text-navi-muted mb-2">경기·통계 수정 (2026 NAVI STATISTICS)</h2>
+        <p className="text-navi-muted text-xs mb-3 leading-relaxed">아래 내용을 수정한 뒤 「수정 완료」를 누르세요. DB에 반영된 기존 값이 불러와져 있습니다.</p>
         <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="match-date" className="block font-semibold mb-1">경기일 *</label>
+            <label htmlFor="match-date" className="block font-semibold mb-1 text-xs">경기일 *</label>
             <input id="match-date" type="date" className={inputClass} value={matchDate} onChange={(e) => setMatchDate(e.target.value)} required />
           </div>
           <div>
-            <label htmlFor="match-time" className="block font-semibold mb-1">경기 시간</label>
+            <label htmlFor="match-time" className="block font-semibold mb-1 text-xs">경기 시간</label>
             <input id="match-time" type="time" className={inputClass} value={matchTime} onChange={(e) => setMatchTime(e.target.value)} />
           </div>
           <div>
-            <label htmlFor="opponent" className="block font-semibold mb-1">상대팀 *</label>
+            <label htmlFor="opponent" className="block font-semibold mb-1 text-xs">상대팀 *</label>
             <input id="opponent" type="text" className={inputClass} value={opponent} onChange={(e) => setOpponent(e.target.value)} placeholder="상대팀 이름" />
           </div>
           <div>
-            <label className="block font-semibold mb-1">경기 결과 *</label>
+            <label className="block font-semibold mb-1 text-xs">경기 결과 *</label>
             <p className="text-xs text-navi-muted mt-1 mb-2">예시) 6:4 → 우리팀 득점 : 상대팀 득점</p>
             <div className="flex items-center gap-2 flex-wrap">
               <input type="number" min="0" className={inputClass + ' max-w-[100px]'} value={ourScore} onChange={(e) => setOurScore(e.target.value)} placeholder="우리" />
@@ -176,11 +176,11 @@ function AdminMatchEdit({ matchId, onBack }) {
             </div>
           </div>
           <div>
-            <label className="block font-semibold mb-1">참석자 *</label>
+            <label className="block font-semibold mb-1 text-xs">참석자 *</label>
             <p className="text-xs text-navi-muted mt-1 mb-2">경기에 참석한 선수를 선택하세요.</p>
             <div className="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-2">
               {players.map((p) => (
-                <label key={p.id} className="flex items-center gap-2 cursor-pointer font-normal">
+                <label key={p.id} className="flex items-center gap-2 cursor-pointer font-normal text-xs">
                   <input type="checkbox" checked={attendeeIds.includes(p.id)} onChange={() => toggleAttendee(p.id)} className="w-4 h-4" />
                   <span>{p.name}</span>
                 </label>
@@ -188,46 +188,46 @@ function AdminMatchEdit({ matchId, onBack }) {
             </div>
           </div>
           <div>
-            <label className="block font-semibold mb-1">골 / 도움 기록</label>
+            <label className="block font-semibold mb-1 text-xs">골 / 도움 기록</label>
             <p className="text-xs text-navi-muted mt-1 mb-2">선수별 골·도움 수를 선택 후 입력</p>
             <div className="overflow-x-auto mb-2">
-              <table className="w-full border-collapse text-sm">
+              <table className="w-full border-collapse text-xs">
                 <thead>
                   <tr>
-                    <th className="text-left py-2 px-2 text-navi-muted font-semibold border-b border-navi-border">선수</th>
-                    <th className="text-left py-2 px-2 text-navi-muted font-semibold border-b border-navi-border">골</th>
-                    <th className="text-left py-2 px-2 text-navi-muted font-semibold border-b border-navi-border">도움</th>
-                    <th className="text-left py-2 px-2 border-b border-navi-border"></th>
+                    <th className="text-left py-1.5 px-2 text-navi-muted font-semibold border-b border-navi-border">선수</th>
+                    <th className="text-left py-1.5 px-2 text-navi-muted font-semibold border-b border-navi-border">골</th>
+                    <th className="text-left py-1.5 px-2 text-navi-muted font-semibold border-b border-navi-border">도움</th>
+                    <th className="text-left py-1.5 px-2 border-b border-navi-border"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {goalAssistRows.map((row, index) => (
                     <tr key={index} className="border-b border-navi-border">
-                      <td className="py-2 px-2">
-                        <select className={inputClass + ' min-w-[100px] max-w-none'} value={row.playerId} onChange={(e) => updateGoalAssistRow(index, 'playerId', e.target.value)}>
+                      <td className="py-1.5 px-2">
+                        <select className={inputClass + ' min-w-[100px] max-w-none text-xs'} value={row.playerId} onChange={(e) => updateGoalAssistRow(index, 'playerId', e.target.value)}>
                           <option value="">선택</option>
                           {players.map((p) => (<option key={p.id} value={p.id}>{p.name}</option>))}
                         </select>
                       </td>
-                      <td className="py-2 px-2">
-                        <input type="number" min="0" className={inputClass + ' max-w-[90px]'} value={row.goals} onChange={(e) => updateGoalAssistRow(index, 'goals', e.target.value)} />
+                      <td className="py-1.5 px-2">
+                        <input type="number" min="0" className={inputClass + ' max-w-[90px] text-xs'} value={row.goals} onChange={(e) => updateGoalAssistRow(index, 'goals', e.target.value)} />
                       </td>
-                      <td className="py-2 px-2">
-                        <input type="number" min="0" className={inputClass + ' max-w-[90px]'} value={row.assists} onChange={(e) => updateGoalAssistRow(index, 'assists', e.target.value)} />
+                      <td className="py-1.5 px-2">
+                        <input type="number" min="0" className={inputClass + ' max-w-[90px] text-xs'} value={row.assists} onChange={(e) => updateGoalAssistRow(index, 'assists', e.target.value)} />
                       </td>
-                      <td className="py-2 px-2">
-                        <button type="button" className={btnSecondary + ' text-sm py-1.5 px-2.5'} onClick={() => removeGoalAssistRow(index)} disabled={goalAssistRows.length <= 1} title="행 삭제">삭제</button>
+                      <td className="py-1.5 px-2">
+                        <button type="button" className="text-xs py-1 px-2 border border-navi-lose text-navi-lose rounded bg-transparent cursor-pointer hover:opacity-90" onClick={() => removeGoalAssistRow(index)} disabled={goalAssistRows.length <= 1} title="행 삭제">삭제</button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <button type="button" className="text-sm py-1.5 px-2.5 border border-navi-button text-navi-button rounded bg-transparent cursor-pointer hover:bg-black/5" onClick={addGoalAssistRow}>+ 골/도움 행 추가</button>
+            <button type="button" className="text-xs py-1 px-2 border border-navi-button text-navi-button rounded bg-transparent cursor-pointer hover:bg-black/5" onClick={addGoalAssistRow}>+ 골/도움 행 추가</button>
           </div>
-          {submitStatus === 'saving' && <p className="text-sm text-navi-muted m-0">저장 중…</p>}
-          {submitStatus === 'ok' && <p className="text-sm text-navi-accent m-0">수정되었습니다. 목록으로 이동합니다.</p>}
-          {submitStatus?.error && <p className="text-red-500 text-sm m-0" role="alert">{submitStatus.error}</p>}
+          {submitStatus === 'saving' && <p className="text-xs text-navi-muted m-0">저장 중…</p>}
+          {submitStatus === 'ok' && <p className="text-xs text-navi-accent m-0">수정되었습니다. 목록으로 이동합니다.</p>}
+          {submitStatus?.error && <p className="text-red-500 text-xs m-0" role="alert">{submitStatus.error}</p>}
           <div className="flex flex-wrap gap-3">
             <button type="submit" className={btnPrimary} disabled={submitStatus === 'saving'}>수정 완료</button>
             <button type="button" className={btnSecondary} onClick={goBack}>취소</button>

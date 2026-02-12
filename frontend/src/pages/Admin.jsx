@@ -256,6 +256,8 @@ function Admin() {
   const btnPrimary = 'font-sans text-base px-5 py-2.5 border border-navi-button bg-navi-button text-white rounded-lg cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed min-h-[44px]'
   const btnSecondary = 'font-sans text-sm px-4 py-2 border border-navi-border rounded-md bg-transparent text-navi-text cursor-pointer hover:opacity-90'
   const btnDanger = 'font-sans text-sm px-3 py-1.5 border border-navi-lose text-navi-lose rounded bg-transparent cursor-pointer hover:opacity-90'
+  // 테이블 행용 작은 버튼 (등록된 경기 / 다음 경기)
+  const btnSmall = 'font-sans text-xs py-1 px-2 border rounded cursor-pointer hover:opacity-90'
 
   if (!isVerified) {
     return (
@@ -303,7 +305,7 @@ function Admin() {
     <div className="max-w-full">
       <section className={card}>
         <div className="flex flex-wrap justify-between items-center gap-3">
-          <h2 className="text-sm font-semibold text-navi-muted m-0">데이터 관리</h2>
+          <h2 className="text-xs font-semibold text-navi-muted m-0">데이터 관리</h2>
           <button type="button" className={btnSecondary + ' text-navi-muted'} onClick={handleLock}>잠그기</button>
         </div>
       </section>
@@ -313,31 +315,31 @@ function Admin() {
         </section>
       )}
       <section className={card}>
-        <h2 className="text-sm font-semibold text-navi-muted mb-3">등록된 경기</h2>
+        <h2 className="text-xs font-semibold text-navi-muted mb-2">등록된 경기</h2>
         {matches.length === 0 ? (
-          <p className="py-6 text-center text-navi-muted">등록된 경기가 없습니다.</p>
+          <p className="py-4 text-center text-navi-muted text-xs">등록된 경기가 없습니다.</p>
         ) : (
           <div className="overflow-x-auto -mx-2 px-2">
-            <table className="w-full border-collapse text-sm">
+            <table className="w-full border-collapse text-xs">
               <thead>
                 <tr>
-                  <th className="text-left py-2 px-3 text-navi-muted font-semibold">경기일·시간</th>
-                  <th className="text-left py-2 px-3 text-navi-muted font-semibold">상대</th>
-                  <th className="text-left py-2 px-3 text-navi-muted font-semibold">스코어</th>
-                  <th className="text-left py-2 px-3 text-navi-muted font-semibold">결과</th>
-                  <th className="text-left py-2 px-3"></th>
+                  <th className="text-left py-1.5 px-2 text-navi-muted font-semibold whitespace-nowrap">경기일·시간</th>
+                  <th className="text-left py-1.5 px-2 text-navi-muted font-semibold whitespace-nowrap">상대</th>
+                  <th className="text-left py-1.5 px-2 text-navi-muted font-semibold whitespace-nowrap">스코어</th>
+                  <th className="text-left py-1.5 px-2 text-navi-muted font-semibold whitespace-nowrap">결과</th>
+                  <th className="text-left py-1.5 px-2"></th>
                 </tr>
               </thead>
               <tbody>
                 {matches.map((m) => (
                   <tr key={m.id} className="hover:bg-black/5">
-                    <td className="py-2 px-3 text-navi-muted text-xs">{formatMatchDate(m.matchDate, m.matchTime)}</td>
-                    <td className="py-2 px-3">{m.opponent || '-'}</td>
-                    <td className="py-2 px-3">{m.ourScore} : {m.opponentScore}</td>
-                    <td className={`py-2 px-3 ${m.result === '승' ? 'text-navi-win' : m.result === '무' ? 'text-navi-draw' : 'text-navi-lose'}`}>{m.result}</td>
-                    <td className="py-2 px-3">
-                      <button type="button" className={btnSecondary + ' text-navi-button border-navi-button mr-1'} onClick={() => setEditingMatchId(m.id)}>수정</button>
-                      <button type="button" className={btnDanger} onClick={() => handleDeleteMatch(m.id)}>삭제</button>
+                    <td className="py-1.5 px-2 text-navi-muted whitespace-nowrap">{formatMatchDate(m.matchDate, m.matchTime)}</td>
+                    <td className="py-1.5 px-2 whitespace-nowrap">{m.opponent || '-'}</td>
+                    <td className="py-1.5 px-2 whitespace-nowrap">{m.ourScore} : {m.opponentScore}</td>
+                    <td className={`py-1.5 px-2 whitespace-nowrap ${m.result === '승' ? 'text-navi-win' : m.result === '무' ? 'text-navi-draw' : 'text-navi-lose'}`}>{m.result}</td>
+                    <td className="py-1.5 px-2 whitespace-nowrap">
+                      <button type="button" className={btnSmall + ' border-navi-button text-navi-button bg-transparent mr-1'} onClick={() => setEditingMatchId(m.id)}>수정</button>
+                      <button type="button" className={btnSmall + ' border-navi-lose text-navi-lose bg-transparent'} onClick={() => handleDeleteMatch(m.id)}>삭제</button>
                     </td>
                   </tr>
                 ))}
@@ -348,34 +350,34 @@ function Admin() {
       </section>
 
       <section className={card}>
-        <h2 className="text-sm font-semibold text-navi-muted mb-3">다음 경기</h2>
-        <p className="text-navi-muted text-sm mb-4 leading-relaxed">홈 화면 "다음 경기" 섹션에 표시됩니다. 경기일·상대팀·장소 등을 등록하세요.</p>
+        <h2 className="text-xs font-semibold text-navi-muted mb-2">다음 경기</h2>
+        <p className="text-navi-muted text-xs mb-3 leading-relaxed">홈 화면 "다음 경기" 섹션에 표시됩니다. 경기일·상대팀·장소 등을 등록하세요.</p>
         {nextMatches.length === 0 ? (
-          <p className="py-6 text-center text-navi-muted">등록된 다음 경기가 없습니다.</p>
+          <p className="py-4 text-center text-navi-muted text-xs">등록된 다음 경기가 없습니다.</p>
         ) : (
           <div className="overflow-x-auto -mx-2 px-2 mb-4">
-            <table className="w-full border-collapse text-sm">
+            <table className="w-full border-collapse text-xs">
               <thead>
                 <tr>
-                  <th className="text-left py-2 px-3 text-navi-muted font-semibold">경기일</th>
-                  <th className="text-left py-2 px-3 text-navi-muted font-semibold">시간</th>
-                  <th className="text-left py-2 px-3 text-navi-muted font-semibold">상대</th>
-                  <th className="text-left py-2 px-3 text-navi-muted font-semibold">장소</th>
-                  <th className="text-left py-2 px-3 text-navi-muted font-semibold">비고</th>
-                  <th className="text-left py-2 px-3"></th>
+                  <th className="text-left py-1.5 px-2 text-navi-muted font-semibold whitespace-nowrap">경기일</th>
+                  <th className="text-left py-1.5 px-2 text-navi-muted font-semibold whitespace-nowrap">시간</th>
+                  <th className="text-left py-1.5 px-2 text-navi-muted font-semibold whitespace-nowrap">상대</th>
+                  <th className="text-left py-1.5 px-2 text-navi-muted font-semibold whitespace-nowrap">장소</th>
+                  <th className="text-left py-1.5 px-2 text-navi-muted font-semibold whitespace-nowrap">비고</th>
+                  <th className="text-left py-1.5 px-2"></th>
                 </tr>
               </thead>
               <tbody>
                 {nextMatches.map((m) => (
                   <tr key={m.id} className="hover:bg-black/5">
-                    <td className="py-2 px-3 text-navi-muted text-xs">{formatMatchDate(m.matchDate, m.matchTime)}</td>
-                    <td className="py-2 px-3">{m.matchTime != null ? String(m.matchTime).slice(0, 5) : '-'}</td>
-                    <td className="py-2 px-3">{m.opponent || '-'}</td>
-                    <td className="py-2 px-3">{m.venue || '-'}</td>
-                    <td className="py-2 px-3">{m.memo || '-'}</td>
-                    <td className="py-2 px-3">
-                      <button type="button" className={btnSecondary + ' text-navi-button border-navi-button mr-1'} onClick={() => startEditNextMatch(m)}>수정</button>
-                      <button type="button" className={btnDanger} onClick={() => handleDeleteNextMatch(m.id)}>삭제</button>
+                    <td className="py-1.5 px-2 text-navi-muted whitespace-nowrap">{formatMatchDate(m.matchDate, m.matchTime)}</td>
+                    <td className="py-1.5 px-2 whitespace-nowrap">{m.matchTime != null ? String(m.matchTime).slice(0, 5) : '-'}</td>
+                    <td className="py-1.5 px-2 whitespace-nowrap">{m.opponent || '-'}</td>
+                    <td className="py-1.5 px-2 whitespace-nowrap">{m.venue || '-'}</td>
+                    <td className="py-1.5 px-2 whitespace-nowrap">{m.memo || '-'}</td>
+                    <td className="py-1.5 px-2 whitespace-nowrap">
+                      <button type="button" className={btnSmall + ' border-navi-button text-navi-button bg-transparent mr-1'} onClick={() => startEditNextMatch(m)}>수정</button>
+                      <button type="button" className={btnSmall + ' border-navi-lose text-navi-lose bg-transparent'} onClick={() => handleDeleteNextMatch(m.id)}>삭제</button>
                     </td>
                   </tr>
                 ))}
@@ -385,28 +387,28 @@ function Admin() {
         )}
         <form className="flex flex-col gap-5" onSubmit={handleSubmitNextMatch}>
           <div>
-            <label htmlFor="next-match-date" className="block font-semibold mb-1">경기일 *</label>
+            <label htmlFor="next-match-date" className="block font-semibold mb-1 text-xs">경기일 *</label>
             <input id="next-match-date" type="date" className={inputClass} value={nextMatchDate} onChange={(e) => setNextMatchDate(e.target.value)} required />
           </div>
           <div>
-            <label htmlFor="next-match-time" className="block font-semibold mb-1">경기 시간</label>
+            <label htmlFor="next-match-time" className="block font-semibold mb-1 text-xs">경기 시간</label>
             <input id="next-match-time" type="time" className={inputClass} value={nextMatchTime} onChange={(e) => setNextMatchTime(e.target.value)} />
           </div>
           <div>
-            <label htmlFor="next-match-opponent" className="block font-semibold mb-1">상대팀 *</label>
+            <label htmlFor="next-match-opponent" className="block font-semibold mb-1 text-xs">상대팀 *</label>
             <input id="next-match-opponent" type="text" className={inputClass} value={nextMatchOpponent} onChange={(e) => setNextMatchOpponent(e.target.value)} placeholder="상대팀 이름" />
           </div>
           <div>
-            <label htmlFor="next-match-venue" className="block font-semibold mb-1">장소</label>
+            <label htmlFor="next-match-venue" className="block font-semibold mb-1 text-xs">장소</label>
             <input id="next-match-venue" type="text" className={inputClass} value={nextMatchVenue} onChange={(e) => setNextMatchVenue(e.target.value)} placeholder="경기장/장소" />
           </div>
           <div>
-            <label htmlFor="next-match-memo" className="block font-semibold mb-1">비고</label>
+            <label htmlFor="next-match-memo" className="block font-semibold mb-1 text-xs">비고</label>
             <input id="next-match-memo" type="text" className={inputClass} value={nextMatchMemo} onChange={(e) => setNextMatchMemo(e.target.value)} placeholder="메모 (선택)" />
           </div>
-          {nextMatchSubmitStatus === 'saving' && <p className="text-sm text-navi-muted m-0">저장 중…</p>}
-          {nextMatchSubmitStatus === 'ok' && <p className="text-sm text-navi-accent m-0">저장되었습니다.</p>}
-          {nextMatchSubmitStatus?.error && <p className="text-red-500 text-sm m-0" role="alert">{nextMatchSubmitStatus.error}</p>}
+          {nextMatchSubmitStatus === 'saving' && <p className="text-xs text-navi-muted m-0">저장 중…</p>}
+          {nextMatchSubmitStatus === 'ok' && <p className="text-xs text-navi-accent m-0">저장되었습니다.</p>}
+          {nextMatchSubmitStatus?.error && <p className="text-red-500 text-xs m-0" role="alert">{nextMatchSubmitStatus.error}</p>}
           <div className="flex flex-wrap items-center gap-3">
             {editingNextMatchId ? (
               <>
@@ -421,23 +423,23 @@ function Admin() {
       </section>
 
       <section className={card}>
-        <h2 className="text-sm font-semibold text-navi-muted mb-2">경기·통계 입력 (2026 NAVI STATISTICS)</h2>
-        <p className="text-navi-muted text-sm mb-4 leading-relaxed">경기일, 상대팀, 경기 결과, 참석자, 골/도움 기록을 입력한 뒤 제출하면 DB에 반영됩니다.</p>
+        <h2 className="text-xs font-semibold text-navi-muted mb-2">경기·통계 입력 (2026 NAVI STATISTICS)</h2>
+        <p className="text-navi-muted text-xs mb-3 leading-relaxed">경기일, 상대팀, 경기 결과, 참석자, 골/도움 기록을 입력한 뒤 제출하면 DB에 반영됩니다.</p>
         <form className="flex flex-col gap-5" onSubmit={handleSubmitMatch}>
           <div>
-            <label htmlFor="match-date" className="block font-semibold mb-1">경기일 *</label>
+            <label htmlFor="match-date" className="block font-semibold mb-1 text-xs">경기일 *</label>
             <input id="match-date" type="date" className={inputClass} value={matchDate} onChange={(e) => setMatchDate(e.target.value)} required />
           </div>
           <div>
-            <label htmlFor="match-time" className="block font-semibold mb-1">경기 시간</label>
+            <label htmlFor="match-time" className="block font-semibold mb-1 text-xs">경기 시간</label>
             <input id="match-time" type="time" className={inputClass} value={matchTime} onChange={(e) => setMatchTime(e.target.value)} />
           </div>
           <div>
-            <label htmlFor="opponent" className="block font-semibold mb-1">상대팀 *</label>
+            <label htmlFor="opponent" className="block font-semibold mb-1 text-xs">상대팀 *</label>
             <input id="opponent" type="text" className={inputClass} value={opponent} onChange={(e) => setOpponent(e.target.value)} placeholder="상대팀 이름" />
           </div>
           <div>
-            <label className="block font-semibold mb-1">경기 결과 *</label>
+            <label className="block font-semibold mb-1 text-xs">경기 결과 *</label>
             <p className="text-xs text-navi-muted mt-1 mb-2">예시) 6:4 → 우리팀 득점 : 상대팀 득점</p>
             <div className="flex items-center gap-2 flex-wrap">
               <input type="number" min="0" className={inputClass + ' max-w-[100px]'} value={ourScore} onChange={(e) => setOurScore(e.target.value)} placeholder="우리" />
@@ -446,11 +448,11 @@ function Admin() {
             </div>
           </div>
           <div>
-            <label className="block font-semibold mb-1">참석자 *</label>
+            <label className="block font-semibold mb-1 text-xs">참석자 *</label>
             <p className="text-xs text-navi-muted mt-1 mb-2">경기에 참석한 선수를 선택하세요.</p>
             <div className="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-2">
               {players.map((p) => (
-                <label key={p.id} className="flex items-center gap-2 cursor-pointer font-normal">
+                <label key={p.id} className="flex items-center gap-2 cursor-pointer font-normal text-xs">
                   <input type="checkbox" checked={attendeeIds.includes(p.id)} onChange={() => toggleAttendee(p.id)} className="w-4 h-4" />
                   <span>{p.name}</span>
                 </label>
@@ -458,46 +460,46 @@ function Admin() {
             </div>
           </div>
           <div>
-            <label className="block font-semibold mb-1">골 / 도움 기록</label>
+            <label className="block font-semibold mb-1 text-xs">골 / 도움 기록</label>
             <p className="text-xs text-navi-muted mt-1 mb-2">선수별 골·도움 수를 아래에서 선택 후 입력</p>
             <div className="overflow-x-auto mb-2">
-              <table className="w-full border-collapse text-sm">
+              <table className="w-full border-collapse text-xs">
                 <thead>
                   <tr>
-                    <th className="text-left py-2 px-2 text-navi-muted font-semibold border-b border-navi-border">선수</th>
-                    <th className="text-left py-2 px-2 text-navi-muted font-semibold border-b border-navi-border">골</th>
-                    <th className="text-left py-2 px-2 text-navi-muted font-semibold border-b border-navi-border">도움</th>
-                    <th className="text-left py-2 px-2 border-b border-navi-border"></th>
+                    <th className="text-left py-1.5 px-2 text-navi-muted font-semibold border-b border-navi-border">선수</th>
+                    <th className="text-left py-1.5 px-2 text-navi-muted font-semibold border-b border-navi-border">골</th>
+                    <th className="text-left py-1.5 px-2 text-navi-muted font-semibold border-b border-navi-border">도움</th>
+                    <th className="text-left py-1.5 px-2 border-b border-navi-border"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {goalAssistRows.map((row, index) => (
                     <tr key={index} className="border-b border-navi-border">
-                      <td className="py-2 px-2">
-                        <select className={inputClass + ' min-w-[100px] max-w-none'} value={row.playerId} onChange={(e) => updateGoalAssistRow(index, 'playerId', e.target.value)}>
+                      <td className="py-1.5 px-2">
+                        <select className={inputClass + ' min-w-[100px] max-w-none text-xs'} value={row.playerId} onChange={(e) => updateGoalAssistRow(index, 'playerId', e.target.value)}>
                           <option value="">선택</option>
                           {players.map((p) => (<option key={p.id} value={p.id}>{p.name}</option>))}
                         </select>
                       </td>
-                      <td className="py-2 px-2">
-                        <input type="number" min="0" className={inputClass + ' max-w-[90px]'} value={row.goals} onChange={(e) => updateGoalAssistRow(index, 'goals', e.target.value)} />
+                      <td className="py-1.5 px-2">
+                        <input type="number" min="0" className={inputClass + ' max-w-[90px] text-xs'} value={row.goals} onChange={(e) => updateGoalAssistRow(index, 'goals', e.target.value)} />
                       </td>
-                      <td className="py-2 px-2">
-                        <input type="number" min="0" className={inputClass + ' max-w-[90px]'} value={row.assists} onChange={(e) => updateGoalAssistRow(index, 'assists', e.target.value)} />
+                      <td className="py-1.5 px-2">
+                        <input type="number" min="0" className={inputClass + ' max-w-[90px] text-xs'} value={row.assists} onChange={(e) => updateGoalAssistRow(index, 'assists', e.target.value)} />
                       </td>
-                      <td className="py-2 px-2">
-                        <button type="button" className={btnSecondary + ' text-sm py-1.5 px-2.5'} onClick={() => removeGoalAssistRow(index)} disabled={goalAssistRows.length <= 1} title="행 삭제">삭제</button>
+                      <td className="py-1.5 px-2">
+                        <button type="button" className={btnSmall + ' border-navi-lose text-navi-lose bg-transparent'} onClick={() => removeGoalAssistRow(index)} disabled={goalAssistRows.length <= 1} title="행 삭제">삭제</button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <button type="button" className="text-sm py-1.5 px-2.5 border border-navi-button text-navi-button rounded bg-transparent cursor-pointer hover:bg-black/5" onClick={addGoalAssistRow}>+ 골/도움 행 추가</button>
+            <button type="button" className="text-xs py-1 px-2 border border-navi-button text-navi-button rounded bg-transparent cursor-pointer hover:bg-black/5" onClick={addGoalAssistRow}>+ 골/도움 행 추가</button>
           </div>
-          {matchSubmitStatus === 'saving' && <p className="text-sm text-navi-muted m-0">저장 중…</p>}
-          {matchSubmitStatus === 'ok' && <p className="text-sm text-navi-accent m-0">경기가 등록되었습니다.</p>}
-          {matchSubmitStatus?.error && <p className="text-red-500 text-sm m-0" role="alert">{matchSubmitStatus.error}</p>}
+          {matchSubmitStatus === 'saving' && <p className="text-xs text-navi-muted m-0">저장 중…</p>}
+          {matchSubmitStatus === 'ok' && <p className="text-xs text-navi-accent m-0">경기가 등록되었습니다.</p>}
+          {matchSubmitStatus?.error && <p className="text-red-500 text-xs m-0" role="alert">{matchSubmitStatus.error}</p>}
           <div className="flex flex-wrap gap-3">
             <button type="submit" className={btnPrimary} disabled={matchSubmitStatus === 'saving'}>경기 등록</button>
           </div>

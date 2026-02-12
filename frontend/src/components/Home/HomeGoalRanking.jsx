@@ -17,13 +17,13 @@ export default function HomeGoalRanking({ topGoals, maxGoalInTop, isOpen, onTogg
       {isOpen && (
         <>
           <div className="overflow-x-auto -mx-2 px-2">
-            <table className="w-full border-collapse text-sm">
+            <table className="w-full border-collapse text-xs">
               <thead>
                 <tr>
-                  <th className="text-left py-2 px-2 text-navi-muted font-semibold w-10">#</th>
-                  <th className="text-left py-2 px-2 text-navi-muted font-semibold">선수</th>
-                  <th className="text-left py-2 px-2 text-navi-muted font-semibold w-24" />
-                  <th className="text-right py-2 px-2 text-navi-muted font-semibold w-14">골</th>
+                  <th className="text-left py-1.5 px-2 text-navi-muted font-semibold w-10">#</th>
+                  <th className="text-left py-1.5 px-2 text-navi-muted font-semibold">선수</th>
+                  <th className="text-left py-1.5 px-2 text-navi-muted font-semibold w-24" />
+                  <th className="text-right py-1.5 px-2 text-navi-muted font-semibold w-14">골</th>
                 </tr>
               </thead>
               <tbody>
@@ -32,13 +32,13 @@ export default function HomeGoalRanking({ topGoals, maxGoalInTop, isOpen, onTogg
                 ) : (
                   topGoals.map((r) => (
                     <tr key={r.rank} className="hover:bg-black/5">
-                      <td className="py-2 px-2 font-semibold text-navi-accent">{r.rank}</td>
-                      <td className="py-2 px-2 whitespace-nowrap">
+                      <td className="py-1.5 px-2 font-semibold text-navi-accent">{r.rank}</td>
+                      <td className="py-1.5 px-2 whitespace-nowrap">
                         <Link to={`/player/${encodeURIComponent(r.playerName)}`} className="text-xs text-navi-accent no-underline hover:underline">
                           {r.playerName}
                         </Link>
                       </td>
-                      <td className="py-2 px-2">
+                      <td className="py-1.5 px-2">
                         <div className="h-2 bg-navi-bg rounded overflow-hidden min-w-[60px]">
                           <div
                             className="h-full bg-navi-accent rounded"
@@ -46,7 +46,7 @@ export default function HomeGoalRanking({ topGoals, maxGoalInTop, isOpen, onTogg
                           />
                         </div>
                       </td>
-                      <td className="py-2 px-2 text-right font-semibold">{r.value}</td>
+                      <td className="py-1.5 px-2 text-right font-semibold">{r.value}</td>
                     </tr>
                   ))
                 )}

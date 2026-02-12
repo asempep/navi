@@ -16,25 +16,25 @@ export default function HomeAssistRanking({ assistRanking, isOpen, onToggle }) {
       </button>
       {isOpen && (
         <div className="overflow-x-auto -mx-2 px-2">
-          <table className="w-full border-collapse text-sm">
+          <table className="w-full border-collapse text-xs">
             <thead>
               <tr>
-                <th className="text-left py-2 px-2 text-navi-muted font-semibold">#</th>
-                <th className="text-left py-2 px-2 text-navi-muted font-semibold">선수</th>
-                <th className="text-left py-2 px-2 text-navi-muted font-semibold">도움</th>
+                <th className="text-left py-1.5 px-2 text-navi-muted font-semibold">#</th>
+                <th className="text-left py-1.5 px-2 text-navi-muted font-semibold">선수</th>
+                <th className="text-left py-1.5 px-2 text-navi-muted font-semibold">도움</th>
               </tr>
             </thead>
             <tbody>
               {assistRanking.length === 0 ? (
-                <tr><td colSpan={3} className="py-4 text-center text-navi-muted">기록 없음</td></tr>
+                <tr><td colSpan={3} className="py-3 text-center text-navi-muted">기록 없음</td></tr>
               ) : (
                 assistRanking.slice(0, 5).map((r) => (
                   <tr key={r.rank} className="hover:bg-black/5">
-                    <td className="py-2 px-2 font-semibold text-navi-accent">{r.rank}</td>
-                    <td className="py-2 px-2">
+                    <td className="py-1.5 px-2 font-semibold text-navi-accent">{r.rank}</td>
+                    <td className="py-1.5 px-2">
                       <Link to={`/player/${encodeURIComponent(r.playerName)}`} className="text-navi-accent no-underline hover:underline">{r.playerName}</Link>
                     </td>
-                    <td className="py-2 px-2 font-semibold">{r.value}</td>
+                    <td className="py-1.5 px-2 font-semibold">{r.value}</td>
                   </tr>
                 ))
               )}

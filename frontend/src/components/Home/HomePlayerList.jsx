@@ -17,13 +17,13 @@ export default function HomePlayerList({ playerNames, getPlayerStats, isOpen, on
       {isOpen && (
         <ul className="list-none p-0 m-0 max-h-48 overflow-y-auto">
           {playerNames.length === 0 ? (
-            <li className="py-2 text-navi-muted text-sm">등록된 선수 없음</li>
+            <li className="py-1.5 text-navi-muted text-xs">등록된 선수 없음</li>
           ) : (
             playerNames.map((name) => {
               const stats = getPlayerStats(name)
               return (
-                <li key={name} className="py-1.5 border-b border-navi-border last:border-0 min-h-[40px] flex items-center relative group">
-                  <Link to={`/player/${encodeURIComponent(name)}`} className="text-navi-accent no-underline hover:underline text-sm">
+                <li key={name} className="py-1 border-b border-navi-border last:border-0 min-h-[36px] flex items-center relative group">
+                  <Link to={`/player/${encodeURIComponent(name)}`} className="text-navi-accent no-underline hover:underline text-xs">
                     {name}
                   </Link>
                   <div className="absolute left-0 bottom-full mb-1 px-2 py-1.5 bg-navi-card border border-navi-border rounded text-xs shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-20">
