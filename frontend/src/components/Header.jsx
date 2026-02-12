@@ -17,7 +17,7 @@ export default function Header() {
         className="block font-cinzel font-bold text-navi-accent text-2xl sm:text-4xl md:text-5xl leading-tight rounded no-underline hover:opacity-90 transition-opacity"
         aria-label="홈으로 이동"
       >
-        NATUS VINCERE
+        FC Natus Vincere
       </Link>
       {isAdmin && (
         <Link to="/home" className={`${BTN_BASE} ${BTN_INACTIVE} text-navi-muted`}>메인으로</Link>
